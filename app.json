@@ -9,6 +9,7 @@
         "newArchEnabled": true,
         "ios": {
             "appleTeamId": "SAQNQ79SJB",
+            "googleServicesFile": "./GoogleService-Info.plist",
             "supportsTablet": true,
             "bundleIdentifier": "app.umebo.umebo",
             "infoPlist": {
@@ -23,6 +24,7 @@
             "icon": "./assets/icons/umebo.icon"
         },
         "android": {
+            "googleServicesFile": "./google-services.json",
             "icon": "./assets/icons/adaptive-icon.png",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/icons/adaptive-icon-fg.png",
@@ -34,7 +36,26 @@
             "package": "app.umebo.umebo"
         },
         "plugins": [
+            "@react-native-firebase/app",
+            "@react-native-firebase/auth",
+            [
+                "expo-build-properties",
+                {
+                    "ios": {
+                        "useFrameworks": "static",
+                        "forceStaticLinking": [
+                            "RNFBApp",
+                            "RNFBAuth",
+                            "RNFBMessaging",
+                            "RNFBAnalytics",
+                            "RNFBRemoteConfig"
+                        ]
+                    }
+                }
+            ],
+            "expo-notifications",
             "expo-router",
+            "expo-secure-store",
             [
                 "expo-splash-screen",
                 {
@@ -48,6 +69,7 @@
                     }
                 }
             ],
+            "expo-sqlite",
             "expo-system-ui",
             "expo-web-browser"
         ],
@@ -60,6 +82,12 @@
             "eas": {
                 "projectId": "e6b0be4b-f13a-4166-bb7d-6b222c80051d"
             }
+        },
+        "runtimeVersion": {
+            "policy": "appVersion"
+        },
+        "updates": {
+            "url": "https://u.expo.dev/e6b0be4b-f13a-4166-bb7d-6b222c80051d"
         }
     }
 }
