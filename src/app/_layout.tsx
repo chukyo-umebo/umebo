@@ -5,6 +5,8 @@ import { setStatusBarStyle } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import analytics from "@react-native-firebase/analytics";
 
+import "./global.css";
+
 export default function RootLayout() {
     const pathname = usePathname();
     const params = useGlobalSearchParams();
