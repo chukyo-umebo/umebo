@@ -3,7 +3,8 @@ import { useColorScheme } from "react-native";
 import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
-import analytics from "@react-native-firebase/analytics";
+import { getAnalytics, logEvent } from "@react-native-firebase/analytics";
+import * as firebase from "@react-native-firebase/app";
 
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 
@@ -17,7 +18,8 @@ export default function RootLayout() {
 
     // Firebase Analytics で画面遷移を記録
     useEffect(() => {
-        analytics().logScreenView({
+        const analytics = getAnalytics(firebase.getApp());
+        logEvent(analytics, "screen_view", {
             screen_name: pathname,
             screen_class: pathname,
             params: JSON.stringify(params),
