@@ -12,7 +12,20 @@
           "package_name": "app.umebo.umebo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "293922024536-84ago6jef2ofilvn4lavkqk1a06l95n3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.umebo.umebo",
+            "certificate_hash": "56648a5bd1d20f621a7f919c83306cc9f5012578"
+          }
+        },
+        {
+          "client_id": "293922024536-gji1lfv0ij6m36posdfodh5k3n79260n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCsypErmKxGJuaeZbujEBjRJWjaxp6sny8"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293922024536-gji1lfv0ij6m36posdfodh5k3n79260n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "293922024536-vldfb887upi3qsq4707m860lrn9ro4h2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.umebo.umebo"
+              }
+            }
+          ]
         }
       }
     }
