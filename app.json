@@ -21,15 +21,15 @@
             "entitlements": {
                 "aps-environment": "production"
             },
-            "icon": "./assets/icons/umebo.icon"
+            "icon": "./src/assets/icons/umebo.icon"
         },
         "android": {
             "googleServicesFile": "./google-services.json",
-            "icon": "./assets/icons/adaptive-icon.png",
+            "icon": "./src/assets/icons/adaptive-icon.png",
             "adaptiveIcon": {
-                "foregroundImage": "./assets/icons/adaptive-icon-fg.png",
-                "backgroundImage": "./assets/icons/adaptive-icon-bg.png",
-                "monochromeImage": "./assets/icons/adaptive-icon-monochrome.png"
+                "foregroundImage": "./src/assets/icons/adaptive-icon-fg.png",
+                "backgroundImage": "./src/assets/icons/adaptive-icon-bg.png",
+                "monochromeImage": "./src/assets/icons/adaptive-icon-monochrome.png"
             },
             "edgeToEdgeEnabled": true,
             "predictiveBackGestureEnabled": false,
@@ -59,12 +59,12 @@
             [
                 "expo-splash-screen",
                 {
-                    "image": "./assets/icons/splash-icon-light.png",
+                    "image": "./src/assets/icons/splash-icon-light.png",
                     "imageWidth": 200,
                     "resizeMode": "contain",
                     "backgroundColor": "#FFFFFF",
                     "dark": {
-                        "image": "./assets/icons/splash-icon-dark.png",
+                        "image": "./src/assets/icons/splash-icon-dark.png",
                         "backgroundColor": "#000000"
                     }
                 }
