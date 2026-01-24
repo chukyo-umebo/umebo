@@ -5,12 +5,15 @@ import { setStatusBarStyle } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import analytics from "@react-native-firebase/analytics";
 
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+
 import "./global.css";
 
 export default function RootLayout() {
     const pathname = usePathname();
     const params = useGlobalSearchParams();
     const colorMode = useColorScheme();
+    const isDarkMode = colorMode === "dark";
 
     // Firebase Analytics で画面遷移を記録
     useEffect(() => {
@@ -22,18 +25,20 @@ export default function RootLayout() {
     }, [pathname, params]);
     // ダークモード対応
     useLayoutEffect(() => {
-        SystemUI.setBackgroundColorAsync(colorMode === "dark" ? "#000" : "#ffffff");
-        setStatusBarStyle(colorMode === "dark" ? "light" : "dark");
-    }, [colorMode]);
+        SystemUI.setBackgroundColorAsync(isDarkMode ? "#000" : "#fff");
+        setStatusBarStyle(isDarkMode ? "light" : "dark");
+    }, [isDarkMode]);
 
     return (
-        <Stack
-            screenOptions={{
-                contentStyle: { backgroundColor: "#0000" },
-                headerShown: false,
-            }}
-        >
-            <Stack.Screen name="index" />
-        </Stack>
+        <GluestackUIProvider mode={isDarkMode ? "dark" : "light"}>
+            <Stack
+                screenOptions={{
+                    contentStyle: { backgroundColor: "#0000" },
+                    headerShown: false,
+                }}
+            >
+                <Stack.Screen name="index" />
+            </Stack>
+        </GluestackUIProvider>
     );
 }
