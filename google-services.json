@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "293922024536",
+    "project_id": "chukyo-umebo",
+    "storage_bucket": "chukyo-umebo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293922024536:android:09130539001354845f6e2d",
+        "android_client_info": {
+          "package_name": "app.umebo.umebo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsypErmKxGJuaeZbujEBjRJWjaxp6sny8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
