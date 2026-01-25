@@ -6,6 +6,7 @@
         "githubUrl": "https://github.com/chukyo-umebo/umebo",
         "scheme": "umebo",
         "userInterfaceStyle": "automatic",
+        "orientation": "portrait",
         "newArchEnabled": true,
         "ios": {
             "appleTeamId": "SAQNQ79SJB",
