@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
@@ -32,15 +33,17 @@ export default function RootLayout() {
     }, [isDarkMode]);
 
     return (
-        <GluestackUIProvider mode={isDarkMode ? "dark" : "light"}>
-            <Stack
-                screenOptions={{
-                    contentStyle: { backgroundColor: "#0000" },
-                    headerShown: false,
-                }}
-            >
-                <Stack.Screen name="index" />
-            </Stack>
-        </GluestackUIProvider>
+        <GestureHandlerRootView>
+            <GluestackUIProvider mode={isDarkMode ? "dark" : "light"}>
+                <Stack
+                    screenOptions={{
+                        contentStyle: { backgroundColor: "#0000" },
+                        headerShown: false,
+                    }}
+                >
+                    <Stack.Screen name="index" />
+                </Stack>
+            </GluestackUIProvider>
+        </GestureHandlerRootView>
     );
 }

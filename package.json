@@ -20,6 +20,7 @@
         "@expo/html-elements": "^0.10.1",
         "@gluestack-ui/core": "^3.0.10",
         "@gluestack-ui/utils": "^3.0.11",
+        "@gorhom/bottom-sheet": "^5",
         "@legendapp/motion": "^2.3.0",
         "@praha/error-factory": "^1.2.1",
         "@react-native-async-storage/async-storage": "2.2.0",
