@@ -1,14 +1,20 @@
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Button, ScrollView, TouchableOpacity, useColorScheme, View } from "react-native";
 
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 
 export default function Index() {
+    const colorMode = useColorScheme();
     return (
         <View className="flex-1">
             <Header title="ホーム" subtitle="すぐに使いたい機能が揃ってます" />
-
+            <Button
+                title="Test Button"
+                onPress={() => {
+                    alert(colorMode);
+                }}
+            />
             <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
                 <View className="gap-3 pb-24">
                     {/* お知らせ Section */}
