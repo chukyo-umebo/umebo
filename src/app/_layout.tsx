@@ -34,7 +34,7 @@ export default function RootLayout() {
 
     return (
         <GestureHandlerRootView>
-            <GluestackUIProvider mode={isDarkMode ? "dark" : "light"}>
+            <GluestackUIProvider mode={colorMode ?? "light"}>
                 <Stack
                     screenOptions={{
                         contentStyle: { backgroundColor: "#0000" },
