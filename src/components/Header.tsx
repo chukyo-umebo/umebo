@@ -1,37 +1,45 @@
-import { Image, useWindowDimensions, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect } from "react";
+import { View } from "react-native";
+import Animated, { useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 
-export default function Header({ title, subtitle }: { title: string; subtitle: string }) {
-    const windowDimensions = useWindowDimensions();
+export default function Header({ title, subtitle, scrollY }: { title: string; subtitle: string; scrollY: number }) {
+    const insets = useSafeAreaInsets();
+    const paddingBottom = 16;
+    const textOpacity = useSharedValue(1);
+    const gradientOpacity = useSharedValue(0);
+
+    useEffect(() => {
+        textOpacity.value = Math.max(paddingBottom - scrollY, 0) / paddingBottom;
+        gradientOpacity.value = 1 - Math.max(paddingBottom - scrollY, 0) / paddingBottom;
+    }, [textOpacity, gradientOpacity, scrollY]);
+
+    const AnimatedHeading = Animated.createAnimatedComponent(Heading);
+    const AnimatedText = Animated.createAnimatedComponent(Text);
+
     return (
-        <View className="px-4 pb-4">
-            <View className="items-center">
-                <View
-                    style={{
-                        width: windowDimensions.width,
-                        position: "absolute",
-                    }}
-                >
-                    <Image
-                        source={require("@/assets/imgs/header-gradiation.png")}
-                        style={{ width: "100%", resizeMode: "stretch" }}
-                        blurRadius={4}
-                    />
-                </View>
-                <SafeAreaView edges={["top", "left", "right"]}>
-                    <View className="flex items-center gap-1">
-                        <Heading size="2xl" className="font-bold">
-                            {title}
-                        </Heading>
-                        <Text className="font-medium text-[#5d5b59]" sub>
-                            {subtitle}
-                        </Text>
-                    </View>
-                </SafeAreaView>
+        <View>
+            <View className="absolute inset-0 top-0" style={{ opacity: gradientOpacity.value }}>
+                <LinearGradient
+                    // Background Linear Gradient
+                    colors={["white", "#fff0"]}
+                    style={{ flex: 1 }}
+                />
             </View>
+            <Animated.View style={{ paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
+                <View className="flex items-center gap-1 px-4" style={{ paddingBottom }}>
+                    <AnimatedHeading size="2xl" className="font-bold" style={{ opacity: textOpacity }}>
+                        {title}
+                    </AnimatedHeading>
+                    <AnimatedText className="font-medium" style={{ opacity: textOpacity }} sub>
+                        {subtitle}
+                    </AnimatedText>
+                </View>
+            </Animated.View>
         </View>
     );
 }

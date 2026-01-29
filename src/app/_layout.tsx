@@ -11,6 +11,8 @@ import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 
 import "./global.css";
 
+// @@iconify-code-gen
+
 export default function RootLayout() {
     const pathname = usePathname();
     const params = useGlobalSearchParams();
@@ -28,7 +30,7 @@ export default function RootLayout() {
     }, [pathname, params]);
     // ダークモード対応
     useLayoutEffect(() => {
-        SystemUI.setBackgroundColorAsync(isDarkMode ? "#000" : "#fff");
+        SystemUI.setBackgroundColorAsync(isDarkMode ? "#000" : "#F9F7F6");
         setStatusBarStyle(isDarkMode ? "light" : "dark");
     }, [isDarkMode]);
 

@@ -16,6 +16,12 @@ module.exports = function (api) {
                 },
             ],
             "react-native-worklets/plugin",
+            [
+                "react-native-iconify/babel",
+                {
+                    icons: ["bxs:home-alt-2", "bxs:bus", "bxs:notepad", "bxs:calendar-alt", "bxs:time"],
+                },
+            ],
         ],
     };
 };
