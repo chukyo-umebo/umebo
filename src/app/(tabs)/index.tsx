@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, TouchableOpacity, View } from "react-native";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
@@ -31,7 +32,7 @@ export default function Index() {
             <ScrollView
                 className="flex-1"
                 showsVerticalScrollIndicator={false}
-                stickyHeaderIndices={[0, 2]}
+                stickyHeaderIndices={[0]}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={topPadding} />
                 }
@@ -56,8 +57,39 @@ export default function Index() {
 }
 
 function InfoView() {
+    const [scrollHeight, setScrollHeight] = useState(0);
+    const maxHeight = 183;
+    const isScrollNeeded = scrollHeight > maxHeight;
+
+    const info = [
+        {
+            title: "大学でクマが発生しました",
+            description: "大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてください。",
+            date: new Date("2026-02-22"),
+            department: "学生支援課",
+        },
+        {
+            title: "大学でクマが発生しました",
+            description: "大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてください。",
+            date: new Date("2026-02-22"),
+            department: "学生支援課",
+        },
+        {
+            title: "大学でクマが発生しました",
+            description: "大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてください。",
+            date: new Date("2026-02-22"),
+            department: "学生支援課",
+        },
+        {
+            title: "大学でクマが発生しました",
+            description: "大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてください。",
+            date: new Date("2026-02-22"),
+            department: "学生支援課",
+        },
+    ].slice(0, 4);
+
     return (
-        <Card className="rounded-2xl bg-white p-3">
+        <Card className="rounded-2xl p-3">
             <View className="mb-2.5 flex-row items-center justify-between pl-1">
                 <Text className="text-lg font-bold text-[#1b1a19]">お知らせ</Text>
                 <TouchableOpacity className="flex-row items-center gap-1.5 rounded-full bg-[#eff3fd] px-3 py-1">
@@ -66,71 +98,42 @@ function InfoView() {
                 </TouchableOpacity>
             </View>
 
-            <View className="h-[212px] overflow-hidden">
-                {/* お知らせ Item 1 */}
-                <View className="gap-1 px-2 py-1.5">
-                    <Text numberOfLines={1} className="text-sm font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。
-                    </Text>
-                    <Text numberOfLines={1} className="text-xs font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてくaflkdsfjalsdjflasdfads
-                    </Text>
-                    <View className="flex-row items-center justify-between">
-                        <Text className="text-xs text-[#b8b6b4]">2026/2/22</Text>
-                        <Text className="text-xs text-[#b8b6b4]">学生支援課</Text>
-                    </View>
-                </View>
-
-                {/* お知らせ Item 2 with 重要 badge */}
-                <View className="gap-1 px-2 py-1.5">
-                    <Text numberOfLines={1} className="text-sm font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。
-                    </Text>
-                    <Text numberOfLines={1} className="text-xs font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてくaflkdsfjalsdjflasdfads
-                    </Text>
-                    <View className="flex-row items-center justify-between">
-                        <Text className="text-xs text-[#b8b6b4]">2026/2/22</Text>
-                        <View className="flex-row items-center gap-1">
-                            <View className="rounded-full bg-[#fff2f2] px-1.5 py-0.5">
-                                <Text className="text-xs font-medium text-[#e90000]">重要</Text>
+            <View className="overflow-hidden rounded-2xl border-4 border-[#F9F7F6]" style={{ maxHeight: maxHeight }}>
+                <ScrollView
+                    onContentSizeChange={(_, height) => {
+                        setScrollHeight(height);
+                    }}
+                >
+                    {info.map((item, index) => {
+                        return (
+                            <View className="gap-1 px-2 py-1.5" key={index}>
+                                <Text numberOfLines={1} className="text-sm font-medium text-[#1b1a19]">
+                                    {item.title}
+                                </Text>
+                                <Text numberOfLines={1} className="text-xs font-medium text-[#1b1a19]">
+                                    {item.description}
+                                </Text>
+                                <View className="flex-row items-center justify-between">
+                                    <Text className="text-xs text-[#b8b6b4]">{item.date.toLocaleDateString()}</Text>
+                                    <Text className="text-xs text-[#b8b6b4]">{item.department}</Text>
+                                </View>
                             </View>
-                            <Text className="text-xs text-[#b8b6b4]">学生支援課</Text>
+                        );
+                    })}
+                    {info.length === 0 && (
+                        <View className="items-center justify-center py-6">
+                            <Text className="text-sm text-[#b8b6b4]">お知らせはありません</Text>
                         </View>
-                    </View>
-                </View>
-
-                {/* お知らせ Item 3 */}
-                <View className="gap-1 px-2 py-1.5">
-                    <Text numberOfLines={1} className="text-sm font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。
-                    </Text>
-                    <Text numberOfLines={1} className="text-xs font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてくaflkdsfjalsdjflasdfads
-                    </Text>
-                    <View className="flex-row items-center justify-between">
-                        <Text className="text-xs text-[#b8b6b4]">2026/2/22</Text>
-                        <Text className="text-xs text-[#b8b6b4]">学生支援課</Text>
-                    </View>
-                </View>
-
-                {/* お知らせ Item 4 */}
-                <View className="gap-1 px-2 py-1.5">
-                    <Text numberOfLines={1} className="text-sm font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。
-                    </Text>
-                    <Text numberOfLines={1} className="text-xs font-medium text-[#1b1a19]">
-                        大学でクマが発生しました。登校時にクマに遭遇する可能性があるので気をつけてくaflkdsfjalsdjflasdfads
-                    </Text>
-                    <View className="flex-row items-center justify-between">
-                        <Text className="text-xs text-[#b8b6b4]">2026/2/22</Text>
-                        <Text className="text-xs text-[#b8b6b4]">学生支援課</Text>
-                    </View>
-                </View>
+                    )}
+                    {isScrollNeeded && <View style={{ height: 50 }} />}
+                </ScrollView>
+                {isScrollNeeded && (
+                    <LinearGradient
+                        colors={["#fff0", "white"]}
+                        style={{ flex: 1, position: "absolute", bottom: 0, left: 0, right: 0, height: 50 }}
+                    />
+                )}
             </View>
-
-            {/* Scroll indicator on the right */}
-            <View className="absolute right-3 top-10 h-[50px] w-1 rounded-full bg-[#e1e1e1]" />
         </Card>
     );
 }
