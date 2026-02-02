@@ -139,6 +139,15 @@ function InfoView() {
 }
 
 function TimetableView() {
+    const timetableData = [
+        { period: 1, subject: "コンピュータネットワーク", room: "1425", color: "#2e6bff" },
+        { period: 2, subject: "コンピュータネットワーク", room: "1425", color: "#f36e88" },
+        { period: 3, subject: null, room: null, color: null },
+        { period: 4, subject: null, room: null, color: null },
+        { period: 5, subject: "コンピュータネットワーク", room: "1425", color: "#ad5ddc" },
+    ];
+    const belongings = "体育館シューズ、数学教科書";
+
     return (
         <Card className="h-[213px] rounded-2xl bg-white p-3">
             <View className="mb-4 flex-row items-center justify-between pl-1">
@@ -152,70 +161,35 @@ function TimetableView() {
             <View className="gap-2">
                 {/* Timetable Grid */}
                 <View className="h-[120px] flex-row gap-0.5">
-                    {/* Period 1 - Blue */}
-                    <View className="flex-1 gap-0.5">
-                        <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
-                            <Text className="text-[10px] font-bold text-[#1b1a19]">1</Text>
-                        </View>
-                        <View className="flex-1 justify-between rounded-[10px] bg-[#2e6bff] p-1">
-                            <Text className="text-center text-[10px] font-semibold leading-[11px] text-white">
-                                コンピュータネットワーク
-                            </Text>
-                            <View className="rounded-full bg-white px-1.5 py-0.5">
-                                <Text className="text-center text-[10px] font-medium text-[#2e6bff]">1425</Text>
+                    {timetableData.map((item) => (
+                        <View key={item.period} className="flex-1 gap-0.5">
+                            <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
+                                <Text className="text-[10px] font-bold text-[#1b1a19]">{item.period}</Text>
                             </View>
+                            {item.subject ? (
+                                <View
+                                    className="flex-1 justify-between rounded-[10px] p-1"
+                                    style={{ backgroundColor: item.color! }}
+                                >
+                                    <Text className="text-center text-[10px] font-semibold leading-[11px] text-white">
+                                        {item.subject}
+                                    </Text>
+                                    <View className="rounded-full bg-white px-1.5 py-0.5">
+                                        <Text
+                                            className="text-center text-[10px] font-medium"
+                                            style={{ color: item.color! }}
+                                        >
+                                            {item.room}
+                                        </Text>
+                                    </View>
+                                </View>
+                            ) : (
+                                <View className="flex-1 items-center justify-center rounded-lg bg-white">
+                                    <View className="h-5 w-5 rounded-full bg-[#f9f7f6]" />
+                                </View>
+                            )}
                         </View>
-                    </View>
-
-                    {/* Period 2 - Pink */}
-                    <View className="flex-1 gap-0.5">
-                        <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
-                            <Text className="text-[10px] font-bold text-[#1b1a19]">2</Text>
-                        </View>
-                        <View className="flex-1 justify-between rounded-[10px] bg-[#f36e88] p-1">
-                            <Text className="text-center text-[10px] font-semibold leading-[11px] text-white">
-                                コンピュータネットワーク
-                            </Text>
-                            <View className="rounded-full bg-white px-1.5 py-0.5">
-                                <Text className="text-center text-[10px] font-medium text-[#f36e88]">1425</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    {/* Period 3 - Empty */}
-                    <View className="flex-1 gap-0.5">
-                        <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
-                            <Text className="text-[10px] font-bold text-[#1b1a19]">3</Text>
-                        </View>
-                        <View className="flex-1 items-center justify-center rounded-lg bg-white">
-                            <View className="h-5 w-5 rounded-full bg-[#f9f7f6]" />
-                        </View>
-                    </View>
-
-                    {/* Period 4 - Empty */}
-                    <View className="flex-1 gap-0.5">
-                        <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
-                            <Text className="text-[10px] font-bold text-[#1b1a19]">4</Text>
-                        </View>
-                        <View className="flex-1 items-center justify-center rounded-lg bg-white">
-                            <View className="h-5 w-5 rounded-full bg-[#f9f7f6]" />
-                        </View>
-                    </View>
-
-                    {/* Period 5 - Purple */}
-                    <View className="flex-1 gap-0.5">
-                        <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
-                            <Text className="text-[10px] font-bold text-[#1b1a19]">5</Text>
-                        </View>
-                        <View className="flex-1 justify-between rounded-[10px] bg-[#ad5ddc] p-1">
-                            <Text className="text-center text-[10px] font-semibold leading-[11px] text-white">
-                                コンピュータネットワーク
-                            </Text>
-                            <View className="rounded-full bg-white px-1.5 py-0.5">
-                                <Text className="text-center text-[10px] font-medium text-[#ad5ddc]">1425</Text>
-                            </View>
-                        </View>
-                    </View>
+                    ))}
                 </View>
 
                 {/* 本日持ち物 */}
@@ -223,7 +197,7 @@ function TimetableView() {
                     <View className="rounded-full bg-[#eff3fd] px-3 py-1">
                         <Text className="text-xs font-semibold text-[#2e6bff]">本日持ち物</Text>
                     </View>
-                    <Text className="text-sm font-medium text-[#1b1a19]">体育館シューズ、数学教科書</Text>
+                    <Text className="text-sm font-medium text-[#1b1a19]">{belongings}</Text>
                 </View>
             </View>
         </Card>
@@ -231,6 +205,8 @@ function TimetableView() {
 }
 
 function BusTimeView() {
+    const nextBusTime = "15分30秒";
+
     return (
         <Card className="flex-row gap-4 rounded-2xl bg-white p-3">
             <View className="justify-center gap-2 px-2">
@@ -241,22 +217,33 @@ function BusTimeView() {
                 </TouchableOpacity>
             </View>
             <View className="h-[60px] flex-1 items-center justify-center rounded-lg bg-[#eff3fd]">
-                <Text className="text-[28px] font-medium text-[#2e6bff]">15分30秒</Text>
+                <Text className="text-[28px] font-medium text-[#2e6bff]">{nextBusTime}</Text>
             </View>
         </Card>
     );
 }
 
 function QuickAccessIcons() {
+    const icons = [
+        { name: "Albo", icon: "アイコン" },
+        { name: "MaNaBo", icon: "アイコン" },
+        { name: "Albo", icon: "アイコン" },
+        { name: "MaNaBo", icon: "アイコン" },
+        { name: "Albo", icon: "アイコン" },
+        { name: "Albo", icon: "アイコン" },
+        { name: "Albo", icon: "アイコン" },
+        { name: "Albo", icon: "アイコン" },
+    ];
+
     return (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-2.5">
             <View className="flex-row gap-2.5">
-                {["Albo", "MaNaBo", "Albo", "MaNaBo", "Albo", "Albo", "Albo", "Albo"].map((name, index) => (
+                {icons.map((item, index) => (
                     <TouchableOpacity key={index} className="items-center gap-2.5 rounded-lg bg-[#eff3fd] px-3 py-2.5">
                         <View className="h-[35px] w-[35px] items-center justify-center rounded-full bg-blue-200">
-                            <Text className="text-[5px] font-semibold text-[#2e6bff]">アイコン</Text>
+                            <Text className="text-[5px] font-semibold text-[#2e6bff]">{item.icon}</Text>
                         </View>
-                        <Text className="text-[10px] font-semibold text-[#2e6bff]">{name}</Text>
+                        <Text className="text-[10px] font-semibold text-[#2e6bff]">{item.name}</Text>
                     </TouchableOpacity>
                 ))}
             </View>
