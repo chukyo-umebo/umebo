@@ -1,58 +1,22 @@
-import { useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, TouchableOpacity, View } from "react-native";
-import Animated, { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-import Header from "@/components/Header";
+import { MainTemplate } from "@/components/template/main";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { useListTopPadding } from "@/hooks/useListTopPadding";
 
 export default function Index() {
-    const [refreshing, setRefreshing] = useState(false);
-    const [scrollY, setScrollY] = useState(0);
-    const insets = useSafeAreaInsets();
-    const topPadding = useListTopPadding();
-    const height = useSharedValue(0);
-
-    useEffect(() => {
-        height.value = scrollY;
-    }, [height, scrollY]);
-
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 2000);
-    }, []);
-
     return (
-        <View className="flex-1">
-            <ScrollView
-                className="flex-1"
-                showsVerticalScrollIndicator={false}
-                stickyHeaderIndices={[0]}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={topPadding} />
-                }
-                onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
-            >
-                <Header title="ホーム" subtitle="すぐに使いたい機能が揃ってます" scrollY={scrollY} />
-                <View className="flex-1" style={{ paddingLeft: insets.left, paddingRight: insets.right }}>
-                    <View className="gap-3 rounded-[36px_36px_0_0] bg-background px-4 pt-10">
-                        <InfoView />
+        <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
+            <InfoView />
 
-                        <TimetableView />
+            <TimetableView />
 
-                        <BusTimeView />
+            <BusTimeView />
 
-                        <QuickAccessIcons />
-                    </View>
-                </View>
-            </ScrollView>
-            <Animated.View className="absolute bottom-0 -z-10 h-[1px] w-screen bg-background" style={{ height }} />
-        </View>
+            <QuickAccessIcons />
+        </MainTemplate>
     );
 }
 

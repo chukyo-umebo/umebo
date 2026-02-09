@@ -1,10 +1,5 @@
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { MainTemplate } from "@/components/template/main";
 
 export default function Index() {
-    return (
-        <SafeAreaView className="bg-background flex-1">
-            <Text>not imprement yet</Text>
-        </SafeAreaView>
-    );
+    return <MainTemplate title="課題" subtitle="現在抱えている課題表示ページです"></MainTemplate>;
 }
