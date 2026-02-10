@@ -22,8 +22,7 @@ const events = [
     },
 ];
 export default function Index() {
-    const [calendarDate, setCalendarDate] = React.useState(new Date(2020, 1, 11));
-    React.useEffect(() => {}, []);
+    const [calendarDate, setCalendarDate] = React.useState(new Date());
     return (
         <MainTemplate title="カレンダー" subtitle="中京大学の年間スケジュールが書いてあります" noOverScroll>
             <View className="mb-4 flex-row items-center justify-between px-4">

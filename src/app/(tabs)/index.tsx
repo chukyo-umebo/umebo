@@ -1,4 +1,5 @@
 import { ScrollView, View } from "react-native";
+import { useRouter } from "expo-router";
 
 import { ClassCard } from "@/components/parts/class-card";
 import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
@@ -10,8 +11,16 @@ import { ContentScrollView } from "@/components/ui/content-scroll-view";
 import { Text } from "@/components/ui/text";
 
 export default function Index() {
+    const router = useRouter();
     return (
         <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
+            <Button
+                onPress={() => {
+                    router.push("/login");
+                }}
+            >
+                <ButtonText>ログイン画面を見る</ButtonText>
+            </Button>
             <View className="gap-4">
                 <InfoView />
 
