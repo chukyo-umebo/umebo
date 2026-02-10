@@ -1,18 +1,13 @@
 import React from "react";
-import { View, ViewProps } from "react-native";
-import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
+import { View } from "react-native";
+import { type VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 
 import { cardStyle } from "./styles";
 
-type ICardProps = ViewProps & VariantProps<typeof cardStyle> & { className?: string };
-
-const Card = React.forwardRef<React.ComponentRef<typeof View>, ICardProps>(function Card(
-    { className, size = "md", variant = "elevated", ...props },
-    ref
-) {
-    return <View className={cardStyle({ size, variant, class: className })} {...props} ref={ref} />;
-});
-
-Card.displayName = "Card";
-
-export { Card };
+type IButtonProps = React.ComponentPropsWithRef<typeof View> &
+    VariantProps<typeof cardStyle> & {
+        showRightIcon?: boolean;
+    };
+export function Card({ className, size = "lg", variant, showRightIcon, ...props }: IButtonProps) {
+    return <View className={cardStyle({ size, variant, class: className })} {...props} />;
+}

@@ -4,7 +4,7 @@ import { Iconify } from "react-native-iconify";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Href, useRouter } from "expo-router";
 
-import { Text } from "./ui/text";
+import { Text } from "../../ui/text";
 
 type FooterTab = "home" | "bus" | "assignment" | "timetable" | "calendar";
 
@@ -12,7 +12,8 @@ type FooterProps = {
     activeTab?: FooterTab;
 };
 
-export default function Footer({ activeTab = "home" }: FooterProps) {
+export function MainFooter
+({ activeTab = "home" }: FooterProps) {
     const router = useRouter();
 
     const tabs: { id: FooterTab; icon: string; label: string; href: Href }[] = [

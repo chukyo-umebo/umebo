@@ -2,7 +2,9 @@ import { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { ClassCard } from "@/components/parts/class-card";
 import { MainTemplate } from "@/components/template/main";
+import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 
@@ -53,16 +55,15 @@ function InfoView() {
     ].slice(0, 4);
 
     return (
-        <Card className="rounded-2xl p-3">
+        <View className="">
             <View className="mb-2.5 flex-row items-center justify-between pl-1">
-                <Text className="text-lg font-bold text-[#1b1a19]">お知らせ</Text>
-                <TouchableOpacity className="flex-row items-center gap-1.5 rounded-full bg-[#eff3fd] px-3 py-1">
-                    <Text className="text-xs font-bold text-[#2e6bff]">もっと見る</Text>
-                    <Text className="text-xs text-[#2e6bff]">›</Text>
-                </TouchableOpacity>
+                <Text className="text-lg font-bold">お知らせ</Text>
+                <Button>
+                    <ButtonText>もっと見る</ButtonText>
+                </Button>
             </View>
 
-            <View className="overflow-hidden rounded-2xl border-4 border-[#F9F7F6]" style={{ maxHeight: maxHeight }}>
+            <Card variant="outline" style={{ maxHeight: maxHeight }}>
                 <ScrollView
                     onContentSizeChange={(_, height) => {
                         setScrollHeight(height);
@@ -97,8 +98,8 @@ function InfoView() {
                         style={{ flex: 1, position: "absolute", bottom: 0, left: 0, right: 0, height: 50 }}
                     />
                 )}
-            </View>
-        </Card>
+            </Card>
+        </View>
     );
 }
 
@@ -113,16 +114,15 @@ function TimetableView() {
     const belongings = "体育館シューズ、数学教科書";
 
     return (
-        <Card className="h-[213px] rounded-2xl bg-white p-3">
-            <View className="mb-4 flex-row items-center justify-between pl-1">
+        <View>
+            <View className="flex-row items-center justify-between pl-1">
                 <Text className="text-lg font-bold text-[#1b1a19]">時間割</Text>
-                <TouchableOpacity className="flex-row items-center gap-1.5 rounded-full bg-[#eff3fd] px-3 py-1">
-                    <Text className="text-xs font-bold text-[#2e6bff]">全て確認</Text>
-                    <Text className="text-xs text-[#2e6bff]">›</Text>
-                </TouchableOpacity>
+                <Button>
+                    <ButtonText>全て確認</ButtonText>
+                </Button>
             </View>
 
-            <View className="gap-2">
+            <Card variant="outline" className="gap-2">
                 {/* Timetable Grid */}
                 <View className="h-[120px] flex-row gap-0.5">
                     {timetableData.map((item) => (
@@ -130,28 +130,14 @@ function TimetableView() {
                             <View className="h-4 items-center justify-center rounded-full bg-[#f9f7f6]">
                                 <Text className="text-[10px] font-bold text-[#1b1a19]">{item.period}</Text>
                             </View>
-                            {item.subject ? (
-                                <View
-                                    className="flex-1 justify-between rounded-[10px] p-1"
-                                    style={{ backgroundColor: item.color! }}
-                                >
-                                    <Text className="text-center text-[10px] font-semibold leading-[11px] text-white">
-                                        {item.subject}
-                                    </Text>
-                                    <View className="rounded-full bg-white px-1.5 py-0.5">
-                                        <Text
-                                            className="text-center text-[10px] font-medium"
-                                            style={{ color: item.color! }}
-                                        >
-                                            {item.room}
-                                        </Text>
-                                    </View>
-                                </View>
-                            ) : (
-                                <View className="flex-1 items-center justify-center rounded-lg bg-white">
-                                    <View className="h-5 w-5 rounded-full bg-[#f9f7f6]" />
-                                </View>
-                            )}
+                            <ClassCard
+                                subject={
+                                    item.subject
+                                        ? { color: item.color!, subject: item.subject, room: item.room! }
+                                        : undefined
+                                }
+                                className="flex-1"
+                            />
                         </View>
                     ))}
                 </View>
@@ -163,8 +149,8 @@ function TimetableView() {
                     </View>
                     <Text className="text-sm font-medium text-[#1b1a19]">{belongings}</Text>
                 </View>
-            </View>
-        </Card>
+            </Card>
+        </View>
     );
 }
 
@@ -172,13 +158,14 @@ function BusTimeView() {
     const nextBusTime = "15分30秒";
 
     return (
-        <Card className="flex-row gap-4 rounded-2xl bg-white p-3">
+        <Card variant="outline" className="flex-row gap-4">
             <View className="justify-center gap-2 px-2">
                 <Text className="pl-1 text-lg font-bold text-[#1b1a19]">次のバス時間</Text>
-                <TouchableOpacity className="flex-row items-center gap-1.5 rounded-full bg-[#eff3fd] px-3 py-1">
-                    <Text className="text-xs font-bold text-[#2e6bff]">他の時間も見る</Text>
-                    <Text className="text-xs text-[#2e6bff]">›</Text>
-                </TouchableOpacity>
+                <Button>
+                    <ButtonText>
+                        <Text className="text-xs font-bold text-[#2e6bff]">他の時間も見る</Text>
+                    </ButtonText>
+                </Button>
             </View>
             <View className="h-[60px] flex-1 items-center justify-center rounded-lg bg-[#eff3fd]">
                 <Text className="text-[28px] font-medium text-[#2e6bff]">{nextBusTime}</Text>

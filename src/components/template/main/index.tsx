@@ -4,7 +4,6 @@ import Animated, { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { useListTopPadding } from "@/hooks/useListTopPadding";
 
@@ -12,7 +11,6 @@ function dummyRefresh() {
     return new Promise((resolve) => setTimeout(resolve, 2000));
 }
 
-const AnimatedHeading = Animated.createAnimatedComponent(Heading);
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
 export function MainTemplate({
@@ -84,9 +82,9 @@ export function MainTemplate({
                         onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
                     >
                         <View className="flex items-center gap-1 px-4" style={{ paddingBottom: headerPaddingBottom }}>
-                            <AnimatedHeading size="2xl" className="font-bold" style={{ opacity: headerTextOpacity }}>
+                            <AnimatedText className="text-2xl font-bold" style={{ opacity: headerTextOpacity }}>
                                 {title}
-                            </AnimatedHeading>
+                            </AnimatedText>
                             <AnimatedText className="font-medium" style={{ opacity: headerTextOpacity }} sub>
                                 {subtitle}
                             </AnimatedText>
@@ -96,7 +94,7 @@ export function MainTemplate({
                 {/* メイン部分 */}
                 <View className="flex-1" style={{ paddingLeft: insets.left, paddingRight: insets.right }}>
                     <View
-                        className="flex-1 gap-3 rounded-[36px_36px_0_0] bg-background px-4 pt-10"
+                        className="flex-1 gap-3 rounded-[36px_36px_0_0] bg-background pt-10"
                         style={{ minHeight: mainViewMinHeight }}
                     >
                         {children}

@@ -7,7 +7,7 @@ import { textStyle } from "./styles";
 type ITextProps = React.ComponentProps<typeof RNText> & VariantProps<typeof textStyle>;
 
 const Text = React.forwardRef<React.ComponentRef<typeof RNText>, ITextProps>(function Text(
-    { className, isTruncated, bold, underline, strikeThrough, size = "md", sub, italic, highlight, ...props },
+    { className, isTruncated, bold, underline, strikeThrough, sub, italic, highlight, ...props },
     ref
 ) {
     return (
@@ -17,7 +17,6 @@ const Text = React.forwardRef<React.ComponentRef<typeof RNText>, ITextProps>(fun
                 bold: bold as boolean,
                 underline: underline as boolean,
                 strikeThrough: strikeThrough as boolean,
-                size,
                 sub: sub as boolean,
                 italic: italic as boolean,
                 highlight: highlight as boolean,

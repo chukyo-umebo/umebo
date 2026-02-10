@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack, useSegments } from "expo-router";
 
-import Footer from "@/components/MainFooter";
+import { MainFooter } from "@/components/parts/footer";
 import HeaderGradient from "@/components/template/main/HeaderGradient";
 
 export default function TabsLayout() {
@@ -24,7 +24,7 @@ export default function TabsLayout() {
                 <Stack.Screen name="calendar" />
                 <Stack.Screen name="timetable" />
             </Stack>
-            <Footer activeTab={getActiveTabFromSegment(lastSegment)} />
+            <MainFooter activeTab={getActiveTabFromSegment(lastSegment)} />
         </>
     );
 }
