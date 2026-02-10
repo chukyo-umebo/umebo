@@ -3,8 +3,11 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+
+
 import { useListTopPadding } from "@/hooks/useListTopPadding";
 import { Header } from "./Header";
+
 
 function dummyRefresh() {
     return new Promise((resolve) => setTimeout(resolve, 2000));
@@ -15,11 +18,13 @@ export function MainTemplate({
     title,
     subtitle,
     children,
+    noOverScroll = false,
 }: {
     refreshFunction?: () => Promise<any>;
     title: string;
     subtitle: string;
     children?: React.ReactNode;
+    noOverScroll?: boolean;
 }) {
     const insets = useSafeAreaInsets();
 
@@ -62,6 +67,8 @@ export function MainTemplate({
                 }
                 onScroll={(e) => setScrollY(e.nativeEvent.contentOffset.y)}
                 onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
+                overScrollMode={noOverScroll ? "never" : "auto"}
+                bounces={!noOverScroll}
             >
                 {/* ヘッダー */}
                 <Header
