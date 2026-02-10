@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 import { ClassCard } from "@/components/parts/class-card";
 import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
 import { MainTemplate } from "@/components/template/main";
+import { Badge, BadgeText } from "@/components/ui/badge";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ContentScrollView } from "@/components/ui/content-scroll-view";
@@ -140,9 +141,9 @@ function TimetableView() {
 
                 {/* 本日持ち物 */}
                 <View className="flex-row items-center gap-2">
-                    <View className="rounded-full bg-[#eff3fd] px-3 py-1">
-                        <Text className="text-xs font-semibold text-[#2e6bff]">本日持ち物</Text>
-                    </View>
+                    <Badge>
+                        <BadgeText>本日持ち物</BadgeText>
+                    </Badge>
                     <Text className="text-sm font-medium text-[#1b1a19]">{belongings}</Text>
                 </View>
             </Card>
