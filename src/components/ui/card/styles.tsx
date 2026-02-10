@@ -7,7 +7,7 @@ export const cardStyle = tva({
             lg: "rounded-2xl",
         },
         variant: {
-            outline: "border-4 border-[#F9F7F6]",
+            outline: "border-[3px] border-[#F9F7F6]",
         },
     },
 });

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { ClassCard } from "@/components/parts/class-card";
+import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
 import { MainTemplate } from "@/components/template/main";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,14 +12,35 @@ import { Text } from "@/components/ui/text";
 export default function Index() {
     return (
         <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
-            <InfoView />
+            <View className="gap-4 px-3">
+                <InfoView />
 
-            <TimetableView />
+                <TimetableView />
 
-            <BusTimeView />
+                <BusTimeView />
 
-            <QuickAccessIcons />
+                <QuickAccessIconsView />
+            </View>
         </MainTemplate>
+    );
+}
+
+function MainHeader({
+    title,
+    buttonText,
+    onButtonPress,
+}: {
+    title: string;
+    buttonText: string;
+    onButtonPress?: () => void;
+}) {
+    return (
+        <View className="mb-2 flex-row items-center justify-between pl-3 pr-2">
+            <Text className="text-lg font-bold">{title}</Text>
+            <Button onPress={onButtonPress}>
+                <ButtonText>{buttonText}</ButtonText>
+            </Button>
+        </View>
     );
 }
 
@@ -55,13 +77,8 @@ function InfoView() {
     ].slice(0, 4);
 
     return (
-        <View className="">
-            <View className="mb-2.5 flex-row items-center justify-between pl-1">
-                <Text className="text-lg font-bold">お知らせ</Text>
-                <Button>
-                    <ButtonText>もっと見る</ButtonText>
-                </Button>
-            </View>
+        <View>
+            <MainHeader title="お知らせ" buttonText="もっと見る" onButtonPress={() => {}} />
 
             <Card variant="outline" style={{ maxHeight: maxHeight }}>
                 <ScrollView
@@ -115,12 +132,7 @@ function TimetableView() {
 
     return (
         <View>
-            <View className="flex-row items-center justify-between pl-1">
-                <Text className="text-lg font-bold text-[#1b1a19]">時間割</Text>
-                <Button>
-                    <ButtonText>全て確認</ButtonText>
-                </Button>
-            </View>
+            <MainHeader title="時間割" buttonText="すべて確認" onButtonPress={() => {}} />
 
             <Card variant="outline" className="gap-2">
                 {/* Timetable Grid */}
@@ -174,7 +186,7 @@ function BusTimeView() {
     );
 }
 
-function QuickAccessIcons() {
+function QuickAccessIconsView() {
     const icons = [
         { name: "Albo", icon: "アイコン" },
         { name: "MaNaBo", icon: "アイコン" },
@@ -187,17 +199,14 @@ function QuickAccessIcons() {
     ];
 
     return (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-2.5">
-            <View className="flex-row gap-2.5">
-                {icons.map((item, index) => (
-                    <TouchableOpacity key={index} className="items-center gap-2.5 rounded-lg bg-[#eff3fd] px-3 py-2.5">
-                        <View className="h-[35px] w-[35px] items-center justify-center rounded-full bg-blue-200">
-                            <Text className="text-[5px] font-semibold text-[#2e6bff]">{item.icon}</Text>
-                        </View>
-                        <Text className="text-[10px] font-semibold text-[#2e6bff]">{item.name}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-        </ScrollView>
+        <View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-2.5">
+                <View className="flex-row gap-2.5">
+                    {icons.map((item, index) => (
+                        <QuickAccessIcon key={index} name={item.name} icon={item.icon} />
+                    ))}
+                </View>
+            </ScrollView>
+        </View>
     );
 }

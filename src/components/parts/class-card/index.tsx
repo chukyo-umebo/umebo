@@ -18,7 +18,7 @@ export function ClassCard({ subject, ...props }: IClassCardProps) {
             {subject ? (
                 <View className="flex-1 justify-between rounded-[10px] p-1" style={{ backgroundColor: subject.color }}>
                     <View className="flex-1 items-center justify-center">
-                        <Text className="text-center text-[0.9rem] font-semibold leading-[1rem]">
+                        <Text className="text-center text-[0.9rem] font-semibold leading-[1rem] text-white">
                             {subject.subject}
                         </Text>
                     </View>

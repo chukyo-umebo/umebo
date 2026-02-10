@@ -94,7 +94,7 @@ export function MainTemplate({
                 {/* メイン部分 */}
                 <View className="flex-1" style={{ paddingLeft: insets.left, paddingRight: insets.right }}>
                     <View
-                        className="flex-1 gap-3 rounded-[36px_36px_0_0] bg-background pt-10"
+                        className="flex-1 rounded-[36px_36px_0_0] bg-background pt-10"
                         style={{ minHeight: mainViewMinHeight }}
                     >
                         {children}
