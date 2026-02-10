@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 
-import { Text } from "@/components/ui/text";
 import { useListTopPadding } from "@/hooks/useListTopPadding";
+import { Header } from "./Header";
 
 function dummyRefresh() {
     return new Promise((resolve) => setTimeout(resolve, 2000));
 }
-
-const AnimatedText = Animated.createAnimatedComponent(Text);
 
 export function MainTemplate({
     refreshFunction = dummyRefresh,
@@ -25,8 +22,6 @@ export function MainTemplate({
     children?: React.ReactNode;
 }) {
     const insets = useSafeAreaInsets();
-    const colorMode = useColorScheme();
-    const isDarkMode = colorMode === "dark";
 
     const [refreshing, setRefreshing] = useState(false);
     const [scrollY, setScrollY] = useState(0);
@@ -69,28 +64,15 @@ export function MainTemplate({
                 onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
             >
                 {/* ヘッダー */}
-                <View>
-                    <Animated.View className="absolute inset-0 top-0" style={{ opacity: headerGradientOpacity }}>
-                        <LinearGradient
-                            // Background Linear Gradient
-                            colors={isDarkMode ? ["black", "#0000"] : ["white", "#fff0"]}
-                            style={{ flex: 1 }}
-                        />
-                    </Animated.View>
-                    <Animated.View
-                        style={{ paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}
-                        onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
-                    >
-                        <View className="flex items-center gap-1 px-4" style={{ paddingBottom: headerPaddingBottom }}>
-                            <AnimatedText className="text-2xl font-bold" style={{ opacity: headerTextOpacity }}>
-                                {title}
-                            </AnimatedText>
-                            <AnimatedText className="font-medium" style={{ opacity: headerTextOpacity }} sub>
-                                {subtitle}
-                            </AnimatedText>
-                        </View>
-                    </Animated.View>
-                </View>
+                <Header
+                    title={title}
+                    subtitle={subtitle}
+                    headerGradientOpacity={headerGradientOpacity}
+                    headerTextOpacity={headerTextOpacity}
+                    headerPaddingBottom={headerPaddingBottom}
+                    insets={insets}
+                    setHeaderHeight={setHeaderHeight}
+                />
                 {/* メイン部分 */}
                 <View className="flex-1" style={{ paddingLeft: insets.left, paddingRight: insets.right }}>
                     <View
