@@ -1,13 +1,8 @@
-import { View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 
-import {
-    AssignmentDateStrip,
-    AssignmentGroupHeader,
-    AssignmentItemRow,
-    type AssignmentItemData,
-} from "@/components/parts/assignment";
 import { MainTemplate } from "@/components/template/main";
 import { Accordion, AccordionItem } from "@/components/ui/accordion";
+import { Text } from "@/components/ui/text";
 
 export default function Index() {
     const dateStrip = {
@@ -135,5 +130,139 @@ export default function Index() {
                 </Accordion>
             </View>
         </MainTemplate>
+    );
+}
+
+export type AssignmentDateChip = {
+    id: string;
+    day: string;
+    weekday: string;
+    isSelected?: boolean;
+};
+
+type AssignmentDateStripProps = {
+    todayLabel: string;
+    dates: AssignmentDateChip[];
+    onDatePress?: (date: AssignmentDateChip) => void;
+};
+
+export function AssignmentDateStrip({ todayLabel, dates, onDatePress }: AssignmentDateStripProps) {
+    return (
+        <View className="gap-1">
+            <View className="pl-2">
+                <Text className="text-[1.25rem] font-semibold text-[#2e6bff]">{todayLabel}</Text>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-1">
+                <View className="w-2" />
+                <View className="flex-row gap-1">
+                    {dates.map((date) => {
+                        const isSelected = date.isSelected;
+                        return (
+                            <TouchableOpacity
+                                key={date.id}
+                                activeOpacity={0.8}
+                                className={`h-[4rem] w-[3.5rem] rounded-[0.625rem] p-1 ${
+                                    isSelected ? "bg-[#eff3fd]" : "border-2 border-[#f9f7f6]"
+                                }`}
+                                onPress={() => onDatePress?.(date)}
+                            >
+                                <View className="flex-1 items-center justify-center">
+                                    <Text
+                                        className={`text-[1.5rem] font-semibold ${
+                                            isSelected ? "text-[#2e6bff]" : "text-[#626160]"
+                                        }`}
+                                    >
+                                        {date.day}
+                                    </Text>
+                                </View>
+                                <View
+                                    className={`items-center rounded-full px-2 py-1 ${
+                                        isSelected ? "bg-white" : "bg-transparent"
+                                    }`}
+                                >
+                                    <Text
+                                        className={`text-[0.625rem] font-medium ${
+                                            isSelected ? "text-[#2e6bff]" : "text-[#626160]"
+                                        }`}
+                                    >
+                                        {date.weekday}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
+                <View className="w-2" />
+            </ScrollView>
+        </View>
+    );
+}
+
+type AssignmentGroupHeaderProps = {
+    dueDate: string;
+    remainingLabel?: string;
+    remainingTone?: "default" | "urgent";
+    emoji?: string;
+};
+
+export function AssignmentGroupHeader({
+    dueDate,
+    remainingLabel,
+    remainingTone = "default",
+    emoji,
+}: AssignmentGroupHeaderProps) {
+    const remainingColor = remainingTone === "urgent" ? "text-[#e90000]" : "text-[#1b1a19]";
+    const dateColor = remainingTone === "urgent" ? "text-[#e90000]" : "text-[#1b1a19]";
+
+    return (
+        <View className="flex-row items-center gap-1.5">
+            <Text className={`text-[0.875rem] font-semibold ${dateColor}`}>{dueDate}</Text>
+            {remainingLabel ? (
+                <View className="flex-row items-center gap-0.5">
+                    <Text className={`text-[0.875rem] font-semibold ${remainingColor}`}>{remainingLabel}</Text>
+                    {emoji ? <Text className="text-[0.875rem]">{emoji}</Text> : null}
+                </View>
+            ) : null}
+        </View>
+    );
+}
+
+export type AssignmentItemData = {
+    id: string;
+    title: string;
+    subject: string;
+    dueTimeLabel?: string;
+    isCompleted?: boolean;
+    isHighlighted?: boolean;
+};
+
+type AssignmentItemRowProps = {
+    item: AssignmentItemData;
+};
+
+export function AssignmentItemRow({ item }: AssignmentItemRowProps) {
+    const isHighlighted = item.isHighlighted;
+    const textColor = isHighlighted ? "text-[#2e6bff]" : "text-[#1b1a19]";
+    const subjectColor = isHighlighted ? "text-[#2e6bff]" : "text-[#b8b6b4]";
+
+    return (
+        <View
+            className={`flex-row items-center gap-2 rounded-2xl px-4 py-2 ${
+                isHighlighted ? "bg-[#eff3fd]" : "border-2 border-[#f9f7f6] bg-white"
+            }`}
+        >
+            <View
+                className={`h-4 w-4 items-center justify-center rounded-full border-2 ${
+                    item.isCompleted ? "border-[#2e6bff] bg-[#2e6bff]" : "border-[#e5e5e5] bg-white"
+                }`}
+            ></View>
+            <View className="flex-1">
+                <Text className={`text-[1rem] font-semibold ${textColor}`}>{item.title}</Text>
+                <Text className={`text-[0.75rem] font-semibold ${subjectColor}`}>{item.subject}</Text>
+            </View>
+            {item.dueTimeLabel ? (
+                <Text className="text-[0.6875rem] font-semibold text-[#e90000]">{item.dueTimeLabel}</Text>
+            ) : null}
+        </View>
     );
 }
