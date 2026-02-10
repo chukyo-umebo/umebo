@@ -1,18 +1,17 @@
-import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { ClassCard } from "@/components/parts/class-card";
 import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
 import { MainTemplate } from "@/components/template/main";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ContentScrollView } from "@/components/ui/content-scroll-view";
 import { Text } from "@/components/ui/text";
 
 export default function Index() {
     return (
         <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
-            <View className="gap-4 px-3">
+            <View className="gap-4">
                 <InfoView />
 
                 <TimetableView />
@@ -45,10 +44,6 @@ function MainHeader({
 }
 
 function InfoView() {
-    const [scrollHeight, setScrollHeight] = useState(0);
-    const maxHeight = 183;
-    const isScrollNeeded = scrollHeight > maxHeight;
-
     const info = [
         {
             title: "大学でクマが発生しました",
@@ -77,15 +72,11 @@ function InfoView() {
     ].slice(0, 4);
 
     return (
-        <View>
+        <View className="mx-3">
             <MainHeader title="お知らせ" buttonText="もっと見る" onButtonPress={() => {}} />
 
-            <Card variant="outline" style={{ maxHeight: maxHeight }}>
-                <ScrollView
-                    onContentSizeChange={(_, height) => {
-                        setScrollHeight(height);
-                    }}
-                >
+            <Card variant="outline">
+                <ContentScrollView className="max-h-[183px] p-3">
                     {info.map((item, index) => {
                         return (
                             <View className="gap-1 px-2 py-1.5" key={index}>
@@ -107,14 +98,7 @@ function InfoView() {
                             <Text className="text-sm text-[#b8b6b4]">お知らせはありません</Text>
                         </View>
                     )}
-                    {isScrollNeeded && <View style={{ height: 50 }} />}
-                </ScrollView>
-                {isScrollNeeded && (
-                    <LinearGradient
-                        colors={["#fff0", "white"]}
-                        style={{ flex: 1, position: "absolute", bottom: 0, left: 0, right: 0, height: 50 }}
-                    />
-                )}
+                </ContentScrollView>
             </Card>
         </View>
     );
@@ -131,10 +115,10 @@ function TimetableView() {
     const belongings = "体育館シューズ、数学教科書";
 
     return (
-        <View>
+        <View className="mx-3">
             <MainHeader title="時間割" buttonText="すべて確認" onButtonPress={() => {}} />
 
-            <Card variant="outline" className="gap-2">
+            <Card variant="outline" className="gap-2 p-3">
                 {/* Timetable Grid */}
                 <View className="h-[120px] flex-row gap-0.5">
                     {timetableData.map((item) => (
@@ -170,7 +154,7 @@ function BusTimeView() {
     const nextBusTime = "15分30秒";
 
     return (
-        <Card variant="outline" className="flex-row gap-4">
+        <Card variant="outline" className="mx-3 flex-row gap-4 p-3">
             <View className="justify-center gap-2 px-2">
                 <Text className="pl-1 text-lg font-bold text-[#1b1a19]">次のバス時間</Text>
                 <Button>
@@ -202,9 +186,11 @@ function QuickAccessIconsView() {
         <View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-2.5">
                 <View className="flex-row gap-2.5">
+                    <View className="w-3" />
                     {icons.map((item, index) => (
                         <QuickAccessIcon key={index} name={item.name} icon={item.icon} />
                     ))}
+                    <View className="w-3" />
                 </View>
             </ScrollView>
         </View>
