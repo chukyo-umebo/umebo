@@ -45,14 +45,14 @@ export function ContentScrollView({ className, style, children, ...props }: Scro
             duration: 300,
             easing: Easing.out(Easing.quad),
         });
-    }, [showTopGradient]);
+    }, [showTopGradient, topOpacity]);
 
     useEffect(() => {
         bottomOpacity.value = withTiming(showBottomGradient ? 1 : 0, {
             duration: 300,
             easing: Easing.out(Easing.quad),
         });
-    }, [showBottomGradient]);
+    }, [bottomOpacity, showBottomGradient]);
 
     const topStyle = useAnimatedStyle(() => ({
         opacity: topOpacity.value,
