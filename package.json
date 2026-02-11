@@ -17,6 +17,7 @@
         "build:ios": "eas build -p ios --profile production --output=./production.ipa --local"
     },
     "dependencies": {
+        "@backpackapp-io/react-native-toast": "^0.15.1",
         "@expo/html-elements": "^0.10.1",
         "@gluestack-ui/core": "^3.0.10",
         "@gluestack-ui/utils": "^3.0.11",
