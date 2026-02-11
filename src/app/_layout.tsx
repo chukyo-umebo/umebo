@@ -11,6 +11,8 @@ import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 
 import "./global.css";
 
+import { googleSignInService } from "@/services/google-signin";
+
 // @@iconify-code-gen
 
 export default function RootLayout() {
@@ -33,6 +35,10 @@ export default function RootLayout() {
         SystemUI.setBackgroundColorAsync(isDarkMode ? "#000" : "#F9F7F6");
         setStatusBarStyle(isDarkMode ? "light" : "dark");
     }, [isDarkMode]);
+    // 初期設定
+    useEffect(() => {
+        googleSignInService.configure();
+    }, []);
 
     return (
         <GestureHandlerRootView>

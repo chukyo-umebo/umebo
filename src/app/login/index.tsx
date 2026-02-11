@@ -6,12 +6,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { googleSignInService } from "@/services/google-signin";
 
 export default function LoginScreen() {
     const router = useRouter();
 
-    const handleGoogleLogin = () => {
+    const handleGoogleLogin = async () => {
         // Build logic for Google Login here
+        await googleSignInService.signInWithGoogle();
         // For now, navigate to the next screen
         router.push("/login/campus");
     };

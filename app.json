@@ -32,6 +32,7 @@
                 "backgroundImage": "./src/assets/icons/adaptive-icon-bg.png",
                 "monochromeImage": "./src/assets/icons/adaptive-icon-monochrome.png"
             },
+            "permissions": ["android.permission.ACCESS_NETWORK_STATE"],
             "edgeToEdgeEnabled": true,
             "predictiveBackGestureEnabled": false,
             "package": "app.umebo.umebo"
