@@ -4,23 +4,15 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
-import { Toasts } from '@backpackapp-io/react-native-toast';
+import { Toasts } from "@backpackapp-io/react-native-toast";
 import { getAnalytics, logEvent } from "@react-native-firebase/analytics";
 import * as firebase from "@react-native-firebase/app";
 
-
-
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-
-
 
 import "./global.css";
 
-
-
-import ErrorBoundary from "@/components/ErrorBoundary";
 import { googleSignInService } from "@/services/google-signin";
-
 
 // @@iconify-code-gen
 
@@ -66,9 +58,7 @@ export default function RootLayout() {
         <GestureHandlerRootView>
             <GluestackUIProvider mode={colorMode ?? "light"}>
                 <Toasts />
-                <ErrorBoundary>
-                    <Routes />
-                </ErrorBoundary>
+                <Routes />
             </GluestackUIProvider>
         </GestureHandlerRootView>
     );

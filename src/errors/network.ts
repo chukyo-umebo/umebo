@@ -5,9 +5,9 @@ export class ChukyoMaintenanceError extends ErrorFactory({
     message: "ポータルサイトがメンテナンス中です。",
 }) {}
 
-export class PalAPIMaintenanceError extends ErrorFactory({
-    name: "PalAPIMaintenanceError",
-    message: "PassPalがメンテナンス中です。",
+export class UMEBOAPIMaintenanceError extends ErrorFactory({
+    name: "UMEBOAPIMaintenanceError",
+    message: "UMEBOがメンテナンス中です。",
 }) {}
 export class TimeoutError extends ErrorFactory({
     name: "TimeoutError",

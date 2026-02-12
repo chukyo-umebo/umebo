@@ -6,6 +6,8 @@ import {
 } from "@react-native-firebase/auth";
 import { GoogleSignin, isSuccessResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
 
+import { authRepository } from "@/data/repositories/auth";
+
 export type GoogleSignInFlowResult =
     | { kind: "success"; studentId: string; firebaseUser: SignInSuccessResponse["data"] }
     | { kind: "cancelled" }
@@ -13,6 +15,11 @@ export type GoogleSignInFlowResult =
     | { kind: "error"; error: unknown };
 
 class GoogleSignInService {
+    private authRepository;
+    constructor(_authRepository = authRepository) {
+        this.authRepository = _authRepository;
+    }
+
     public configure() {
         GoogleSignin.configure({
             hostedDomain: "m.chukyo-u.ac.jp",
@@ -45,7 +52,7 @@ class GoogleSignInService {
             const firebaseIdToken = await this.getFirebaseIdToken();
             const firebaseUser = response.data;
             // PalAPIにログイン
-            // this.authRepository.login(firebaseIdToken);
+            // await this.authRepository.login(firebaseIdToken);
             console.log("Firebase ID Token:", firebaseIdToken);
             // Firebaseユーザー情報をストアに保存
             // useAuth.getState().setFirebaseUser(firebaseUser);
