@@ -3,11 +3,8 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-
-
 import { useListTopPadding } from "@/hooks/useListTopPadding";
 import { Header } from "./Header";
-
 
 function dummyRefresh() {
     return new Promise((resolve) => setTimeout(resolve, 2000));

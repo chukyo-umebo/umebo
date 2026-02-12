@@ -1,3 +1,4 @@
 assets/
 eas.json
 google-services.json
+src/index.ts

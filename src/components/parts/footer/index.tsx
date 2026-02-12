@@ -12,8 +12,7 @@ type FooterProps = {
     activeTab?: FooterTab;
 };
 
-export function MainFooter
-({ activeTab = "home" }: FooterProps) {
+export function MainFooter({ activeTab = "home" }: FooterProps) {
     const router = useRouter();
 
     const tabs: { id: FooterTab; icon: string; label: string; href: Href }[] = [

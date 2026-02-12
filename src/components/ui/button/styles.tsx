@@ -1,9 +1,5 @@
 import { tva } from "@gluestack-ui/utils/nativewind-utils";
 
-
-
-
-
 export const buttonStyle = tva({
     base: "flex-row items-center",
     variants: {
