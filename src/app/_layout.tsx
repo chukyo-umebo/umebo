@@ -9,16 +9,17 @@ import { getAnalytics, logEvent } from "@react-native-firebase/analytics";
 import * as firebase from "@react-native-firebase/app";
 
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import { AuthStateProvider, useAuthState } from "@/contexts/AuthStateContext";
 
 import "./global.css";
-
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import { googleSignInService } from "@/services/google-signin";
 
 // @@iconify-code-gen
 
 function Routes() {
+    const { isLoggedIn } = useAuthState();
+
     return (
         <Stack
             screenOptions={{
@@ -26,7 +27,9 @@ function Routes() {
                 headerShown: false,
             }}
         >
-            <Stack.Screen name="(tabs)" />
+            <Stack.Protected guard={isLoggedIn}>
+                <Stack.Screen name="(tabs)" />
+            </Stack.Protected>
             <Stack.Screen name="login" />
         </Stack>
     );
@@ -55,8 +58,8 @@ export default function RootLayout() {
     // 初期設定
     useEffect(() => {
         googleSignInService.init();
-        GoogleSignin.signInSilently().then((signInSilentlyResponse) => {
-            if (signInSilentlyResponse.type === "success") {
+        googleSignInService.silentSignIn().then((isSuccess) => {
+            if (isSuccess) {
                 // TODO: FCMトークンの更新処理を別サービスから呼び出す
             }
         });
@@ -65,8 +68,10 @@ export default function RootLayout() {
     return (
         <GestureHandlerRootView>
             <GluestackUIProvider mode={colorMode ?? "light"}>
-                <Toasts />
-                <Routes />
+                <AuthStateProvider>
+                    <Toasts />
+                    <Routes />
+                </AuthStateProvider>
             </GluestackUIProvider>
         </GestureHandlerRootView>
     );

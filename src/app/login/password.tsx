@@ -1,21 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { AuthService } from "@/services/auth";
+import { googleSignInService } from "@/services/google-signin";
 
 export default function PasswordScreen() {
     const router = useRouter();
+    const [studentId, setStudentId] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
     const handleLogin = () => {
         if (password.length > 0) {
-            router.push("/login/terms");
+            AuthService.loginChukyo(studentId, password).then((isSuccess) => {
+                if (isSuccess) {
+                    router.push("/login/terms");
+                } else {
+                    toast.error("ログインに失敗しました。パスワードを再度ご確認ください。");
+                }
+            });
         }
     };
 
@@ -23,9 +33,18 @@ export default function PasswordScreen() {
         router.push("/login");
     };
 
+    useEffect(() => {
+        googleSignInService.getLoggedInStudentId().then((id) => {
+            if (id) {
+                setStudentId(id);
+            } else {
+                router.push("/login");
+            }
+        });
+    }, [router]);
+
     const hasValue = password.length > 0;
     const borderColor = hasValue || isFocused ? "border-[#2e6bff] bg-[#eff3fd]" : "border-[#e1e1e1] bg-[#f9f7f6]";
-    const textColor = hasValue ? "text-[#1b1a19]" : "text-[#adacaa]";
 
     return (
         <SafeAreaView className="relative flex-1 bg-[#f9f7f6]">
@@ -37,7 +56,7 @@ export default function PasswordScreen() {
 
                 <View>
                     <Text className="text-center text-[0.875rem] font-medium text-[#626160]">
-                        CU_ID(t324076)のパスワードを入力してください。
+                        CU_ID({studentId})のパスワードを入力してください。
                     </Text>
                 </View>
             </View>

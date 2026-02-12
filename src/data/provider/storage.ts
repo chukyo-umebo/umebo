@@ -33,7 +33,7 @@ class StorageProvider {
     }
 
     private makeKey(key: string): string {
-        return `${this.namespace}:${key}`;
+        return `${this.namespace}.${key}`;
     }
 }
 

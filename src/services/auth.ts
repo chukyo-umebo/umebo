@@ -1,5 +1,6 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
+import { updateAuthState } from "@/contexts/AuthStateContext";
 import { authRepository } from "@/data/repositories/auth";
 
 class authService {
@@ -10,16 +11,15 @@ class authService {
 
     public async signOut(): Promise<void> {
         await GoogleSignin.signOut();
+        await this.authRepository.clearCredentials();
+        updateAuthState(false);
+        console.log("User signed out successfully.");
     }
 
-    public async saveCredentials(studentId: string, password: string): Promise<void> {
+    public async loginChukyo(studentId: string, password: string): Promise<boolean> {
         await this.authRepository.saveCredentials(studentId, password);
-    }
-
-    public async isLoggedIn(): Promise<boolean> {
-        const studentId = await this.authRepository.getStudentId();
-        const password = await this.authRepository.getPassword();
-        return studentId !== null && password !== null;
+        updateAuthState(true);
+        return true;
     }
 }
 

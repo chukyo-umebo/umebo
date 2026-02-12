@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Button, ButtonText } from "@/components/ui/button";
@@ -11,11 +12,28 @@ import { googleSignInService } from "@/services/google-signin";
 export default function LoginScreen() {
     const router = useRouter();
 
+    useEffect(() => {
+        googleSignInService.silentSignIn().then((isSuccess) => {
+            console.log("Silent sign-in success:", isSuccess);
+            if (isSuccess) {
+                router.push("/login/campus");
+            }
+        });
+    }, [router]);
+
     const handleGoogleLogin = async () => {
-        // Build logic for Google Login here
-        await googleSignInService.signInWithGoogle();
-        // For now, navigate to the next screen
-        router.push("/login/campus");
+        const signInResult = await googleSignInService.signInWithGoogle();
+        if (signInResult.kind === "success") {
+            router.push("/login/campus");
+        } else if (signInResult.kind === "invalid-domain") {
+            toast.error(
+                `大学のメールアドレス（${signInResult.allowedDomain}）を使用してください。${signInResult.email}は使用できません。`
+            );
+            googleSignInService.signOut();
+        } else if (signInResult.kind === "error") {
+            toast.error("Googleサインイン中にエラーが発生しました。もう一度お試しください。");
+            console.error("Googleサインインエラー:", signInResult.error);
+        }
     };
 
     return (

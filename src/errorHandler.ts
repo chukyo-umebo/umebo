@@ -2,6 +2,7 @@ import { Alert } from "react-native";
 import { toast } from "@backpackapp-io/react-native-toast";
 
 import { ShouldReSignInError } from "./errors/auth";
+import { AuthService } from "./services/auth";
 
 export function handleError(error: Error, isFatal: boolean) {
     console.log("JS Exception:", error, isFatal);
@@ -26,8 +27,9 @@ ${error.stack}`
         toast.error(`エラー: ${realError.message}`);
     }
 
-    if (error instanceof ShouldReSignInError) {
+    if (realError instanceof ShouldReSignInError) {
         // TODO: ログアウト処理を呼び出す
+        AuthService.signOut();
     }
 
     // Send to error monitoring service

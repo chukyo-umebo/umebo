@@ -1,4 +1,5 @@
 import { GoogleSignin, isSuccessResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
+import { jwtDecode } from "jwt-decode";
 
 import { authRepository } from "@/data/repositories/auth";
 
@@ -9,7 +10,7 @@ export type GoogleSignInFlowResult =
     | { kind: "error"; error: unknown };
 
 class GoogleSignInService {
-    private authRepository;
+    private authRepository: typeof authRepository;
     constructor(_authRepository = authRepository) {
         this.authRepository = _authRepository;
     }
@@ -22,9 +23,37 @@ class GoogleSignInService {
         });
     }
 
+    public async signOut(): Promise<void> {
+        await GoogleSignin.signOut();
+    }
+
+    public async silentSignIn(): Promise<boolean> {
+        try {
+            const response = await GoogleSignin.signInSilently();
+
+            if (response.type === "success") {
+                return true;
+            }
+        } catch (error) {
+            console.error("Googleサイレントサインインに失敗しました:", error);
+        }
+        return false;
+    }
+
+    public async getLoggedInStudentId(): Promise<string | null> {
+        try {
+            const tokens = await GoogleSignin.getTokens();
+            const parsed = jwtDecode<{ email: string }>(tokens.idToken);
+            return this.extractStudentId(parsed.email);
+        } catch (error) {
+            console.error("ログイン中のユーザーの学生IDの取得に失敗しました:", error);
+            return null;
+        }
+    }
+
     public async signInWithGoogle(): Promise<GoogleSignInFlowResult> {
         try {
-            await GoogleSignin.signOut();
+            await this.signOut();
             const response = await GoogleSignin.signIn();
 
             // ユーザーがキャンセルした場合
@@ -44,8 +73,8 @@ class GoogleSignInService {
 
             // ユーザー情報を取得
             const firebaseUser = response.data;
-            // PalAPIにログイン
-            await this.authRepository.login();
+            // UMEBOにログイン
+            await this.authRepository.loginUmeboAPI();
 
             return {
                 kind: "success",

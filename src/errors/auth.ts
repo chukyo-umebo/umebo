@@ -22,5 +22,5 @@ export class AuthProcessError extends ErrorFactory({
 
 export class ShouldReSignInError extends ErrorFactory({
     name: "ShouldReSignInError",
-    message: "ログアウトし、再度サインインしてください。",
+    message: "認証に失敗しました。再度サインインしてください。",
 }) {}

@@ -16,10 +16,15 @@ class AuthRepository {
         this.storageProvider = _storageProvider;
     }
 
-    public async login(): Promise<Response> {
+    public async loginUmeboAPI(): Promise<Response> {
         const firebaseIdToken = await this.firebaseProvider.getFirebaseIdToken();
 
         return this.umeboapiProvider.login(firebaseIdToken);
+    }
+    public async isLoggedIn(): Promise<boolean> {
+        const studentId = await this.storageProvider.getStudentId();
+        const password = await this.storageProvider.getPassword();
+        return studentId !== null && password !== null;
     }
 
     public async saveCredentials(studentId: string, password: string): Promise<void> {
