@@ -6,20 +6,18 @@ import {
     setJSExceptionHandler,
     setNativeExceptionHandler
 } from 'react-native-global-exception-handler';
+import { handleError } from './errorHandler';
 
 // Handle JavaScript exceptions
-setJSExceptionHandler((error, isFatal) => {
-  console.log('JS Exception:', error, isFatal);
-  // Send to error monitoring service
-}, true); // Enable in dev mode
+setJSExceptionHandler(handleError, true); // Enable in dev mode
 
 // Handle native exceptions
 setNativeExceptionHandler((errorString) => {
-  console.log('Native Exception:', errorString);
+    console.error('Native Exception:', errorString);
   // Send to error monitoring service
 }, {
-  forceAppToQuit: true,
-  callPreviouslyDefinedHandler: false
+    forceAppToQuit: true,
+    callPreviouslyDefinedHandler: false
 });
 
 // Register app entry through Expo Router

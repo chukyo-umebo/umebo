@@ -2,12 +2,12 @@ import { ErrorFactory } from "@praha/error-factory";
 
 export class ChukyoMaintenanceError extends ErrorFactory({
     name: "ChukyoMaintenanceError",
-    message: "ポータルサイトがメンテナンス中です。",
+    message: "ポータルサイトがメンテナンス中です。時間をおいて再度お試しください。",
 }) {}
 
 export class UMEBOAPIMaintenanceError extends ErrorFactory({
     name: "UMEBOAPIMaintenanceError",
-    message: "UMEBOがメンテナンス中です。",
+    message: "UMEBOがメンテナンス中です。時間をおいて再度お試しください。",
 }) {}
 export class TimeoutError extends ErrorFactory({
     name: "TimeoutError",
