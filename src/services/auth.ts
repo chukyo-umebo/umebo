@@ -13,7 +13,6 @@ class authService {
         await GoogleSignin.signOut();
         await this.authRepository.clearCredentials();
         updateAuthState(false);
-        console.log("User signed out successfully.");
     }
 
     public async loginChukyo(studentId: string, password: string): Promise<boolean> {

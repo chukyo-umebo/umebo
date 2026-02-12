@@ -6,6 +6,7 @@ import { AuthService } from "./services/auth";
 
 export function handleError(error: Error, isFatal: boolean) {
     console.log("JS Exception:", error, isFatal);
+    if (error.cause instanceof Error) console.log("Caused by:", error.cause);
     if (isFatal) {
         Alert.alert(
             "アプリ内で深刻なエラーが発生しました",
@@ -22,7 +23,6 @@ ${error.stack}`
         realError = error.cause;
     }
 
-    console.log("Non-fatal error occurred:", realError.cause, realError.message, realError.name);
     if (typeof realError.message === "string") {
         toast.error(`エラー: ${realError.message}`);
     }

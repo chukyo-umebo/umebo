@@ -14,7 +14,6 @@ export default function LoginScreen() {
 
     useEffect(() => {
         googleSignInService.silentSignIn().then((isSuccess) => {
-            console.log("Silent sign-in success:", isSuccess);
             if (isSuccess) {
                 router.push("/login/campus");
             }
