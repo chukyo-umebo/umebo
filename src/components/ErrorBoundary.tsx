@@ -1,26 +1,53 @@
 import * as React from "react";
 import { toast } from "@backpackapp-io/react-native-toast";
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }> {
-    constructor(props: { fallback: React.ReactNode; children: React.ReactNode }) {
+type ErrorBoundaryProps = {
+    children: React.ReactNode;
+    fallback?: React.ReactNode;
+};
+
+type ErrorBoundaryState = {
+    hasError: boolean;
+};
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+    private defaultErrorHandler?: (error: unknown, isFatal?: boolean) => void;
+
+    constructor(props: ErrorBoundaryProps) {
         super(props);
         this.state = { hasError: false };
     }
 
-    static getDerivedStateFromError(error: any) {
-        console.log("hello");
-        // Update state so the next render will show the fallback UI.
+    static getDerivedStateFromError() {
         return { hasError: true };
     }
 
-    override componentDidCatch(error: any, info: any) {
+    override componentDidMount() {
+        const errorUtils = (global as { ErrorUtils?: any }).ErrorUtils;
+        if (errorUtils?.getGlobalHandler && errorUtils?.setGlobalHandler) {
+            this.defaultErrorHandler = errorUtils.getGlobalHandler();
+            errorUtils.setGlobalHandler((error: unknown, isFatal?: boolean) => {
+                toast.error(error instanceof Error ? error.message : String(error));
+                this.defaultErrorHandler?.(error, isFatal);
+            });
+        }
+    }
+
+    override componentWillUnmount() {
+        const errorUtils = (global as { ErrorUtils?: any }).ErrorUtils;
+        if (errorUtils?.setGlobalHandler && this.defaultErrorHandler) {
+            errorUtils.setGlobalHandler(this.defaultErrorHandler);
+        }
+    }
+
+    override componentDidCatch(error: unknown, info: unknown) {
         console.log(error, info, React.captureOwnerStack());
-        toast.error("予期せぬエラーが発生しました。アプリを再起動してください。");
+        toast.error(error instanceof Error ? error.message : String(error));
     }
 
     override render() {
-        if ((this.state as any).hasError) {
-            return <></>;
+        if (this.state.hasError) {
+            return this.props.fallback ?? null;
         }
         return this.props.children;
     }

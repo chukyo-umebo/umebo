@@ -9,6 +9,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ContentScrollView } from "@/components/ui/content-scroll-view";
 import { Text } from "@/components/ui/text";
+import { NetworkError } from "@/errors/network";
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
     return (
@@ -33,7 +34,7 @@ export default function Index() {
                 </Button>
                 <Button
                     onPress={() => {
-                        throw new Error("Test error");
+                        throw new NetworkError();
                     }}
                 >
                     <ButtonText>エラーを起こす</ButtonText>
