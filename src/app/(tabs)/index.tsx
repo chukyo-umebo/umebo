@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import { useRouter } from "expo-router";
+import { ErrorBoundaryProps, useRouter } from "expo-router";
 
 import { ClassCard } from "@/components/parts/class-card";
 import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
@@ -10,17 +10,36 @@ import { Card } from "@/components/ui/card";
 import { ContentScrollView } from "@/components/ui/content-scroll-view";
 import { Text } from "@/components/ui/text";
 
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+    return (
+        <View style={{ flex: 1, backgroundColor: "red" }}>
+            <Text>{error.message}</Text>
+            <Text onPress={retry}>Try Again?</Text>
+        </View>
+    );
+}
+
 export default function Index() {
     const router = useRouter();
     return (
         <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
-            <Button
-                onPress={() => {
-                    router.push("/login");
-                }}
-            >
-                <ButtonText>ログイン画面を見る</ButtonText>
-            </Button>
+            <View className="gap-2">
+                <Button
+                    onPress={() => {
+                        router.push("/login");
+                    }}
+                >
+                    <ButtonText>ログイン画面を見る</ButtonText>
+                </Button>
+                <Button
+                    onPress={() => {
+                        throw new Error("Test error");
+                    }}
+                >
+                    <ButtonText>エラーを起こす</ButtonText>
+                </Button>
+            </View>
+
             <View className="gap-4">
                 <InfoView />
 
