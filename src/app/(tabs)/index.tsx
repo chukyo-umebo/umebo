@@ -9,12 +9,11 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ContentScrollView } from "@/components/ui/content-scroll-view";
 import { Text } from "@/components/ui/text";
-import { NetworkError } from "@/errors/network";
+import { firebaseProvider } from "@/data/provider/firebase";
 
 export default function Index() {
     const router = useRouter();
 
-    
     return (
         <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
             <View className="gap-2">
@@ -26,11 +25,12 @@ export default function Index() {
                     <ButtonText>ログイン画面を見る</ButtonText>
                 </Button>
                 <Button
-                    onPress={() => {
-                        throw new NetworkError();
+                    onPress={async () => {
+                        const firebaseIdToken = await firebaseProvider.getFirebaseIdToken();
+                        // console.log("Firebase ID Token:", firebaseIdToken);
                     }}
                 >
-                    <ButtonText>エラーを起こす</ButtonText>
+                    <ButtonText>test</ButtonText>
                 </Button>
             </View>
 

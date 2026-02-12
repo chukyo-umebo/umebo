@@ -19,3 +19,8 @@ export class AuthProcessError extends ErrorFactory({
     name: "AuthProcessError",
     message: "認証処理中にエラーが発生しました。",
 }) {}
+
+export class ShouldGoogleSignInError extends ErrorFactory({
+    name: "ShouldGoogleSignInError",
+    message: "Googleログインをしなおしてください。",
+}) {}

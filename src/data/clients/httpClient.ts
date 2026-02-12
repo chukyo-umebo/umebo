@@ -52,6 +52,7 @@ const isAbortError = (error: unknown): boolean => {
  * @throws MaintenanceError|NetworkError|TimeoutError
  */
 export const httpClient = async (input: string | URL, options: HttpClientOptions = {}): Promise<Response> => {
+    // __DEV__ && console.log(`HTTP Request: ${input}, Options: ${JSON.stringify(options)}`);
     const {
         timeoutMs: timeoutOverride = DEFAULT_TIMEOUT_MS,
         clientMode,
