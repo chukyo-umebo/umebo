@@ -12,6 +12,8 @@ import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 
 import "./global.css";
 
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
 import { googleSignInService } from "@/services/google-signin";
 
 // @@iconify-code-gen
@@ -51,7 +53,12 @@ export default function RootLayout() {
     }, [isDarkMode]);
     // 初期設定
     useEffect(() => {
-        googleSignInService.configure();
+        googleSignInService.init();
+        GoogleSignin.signInSilently().then((signInSilentlyResponse) => {
+            if (signInSilentlyResponse.type === "success") {
+                // TODO: FCMトークンの更新処理を別サービスから呼び出す
+            }
+        });
     }, []);
 
     return (

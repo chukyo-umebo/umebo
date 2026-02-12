@@ -62,6 +62,7 @@
         "react-native": "0.81.5",
         "react-native-big-calendar": "^4.19.0",
         "react-native-gesture-handler": "~2.28.0",
+        "react-native-global-exception-handler": "^1.0.2",
         "react-native-iconify": "^2.0.3",
         "react-native-legal": "^1.6.0",
         "react-native-reanimated": "~4.1.6",

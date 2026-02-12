@@ -1,4 +1,3 @@
-
 import { GoogleSignin, isSuccessResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
 
 import { authRepository } from "@/data/repositories/auth";
@@ -15,7 +14,7 @@ class GoogleSignInService {
         this.authRepository = _authRepository;
     }
 
-    public configure() {
+    public async init() {
         GoogleSignin.configure({
             hostedDomain: "m.chukyo-u.ac.jp",
             webClientId: "293922024536-gji1lfv0ij6m36posdfodh5k3n79260n.apps.googleusercontent.com",

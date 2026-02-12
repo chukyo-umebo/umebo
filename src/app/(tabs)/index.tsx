@@ -1,5 +1,6 @@
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import { ClassCard } from "@/components/parts/class-card";
 import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
@@ -27,10 +28,17 @@ export default function Index() {
                 <Button
                     onPress={async () => {
                         const firebaseIdToken = await firebaseProvider.getFirebaseIdToken();
-                        // console.log("Firebase ID Token:", firebaseIdToken);
+                        console.log("Firebase ID Token:", firebaseIdToken);
                     }}
                 >
                     <ButtonText>test</ButtonText>
+                </Button>
+                <Button
+                    onPress={async () => {
+                        GoogleSignin.signOut();
+                    }}
+                >
+                    <ButtonText>google logout</ButtonText>
                 </Button>
             </View>
 

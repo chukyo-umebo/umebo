@@ -50,6 +50,7 @@
         "react-native": "0.81.5",
         "react-native-big-calendar": "^4.19.0",
         "react-native-gesture-handler": "~2.28.0",
+        "react-native-global-exception-handler": "^1.0.2",
         "react-native-iconify": "^2.0.3",
         "react-native-legal": "^1.6.0",
         "react-native-reanimated": "~4.1.6",
@@ -2054,6 +2055,8 @@
     "react-native-fetch-api": ["react-native-fetch-api@3.0.0", "", { "dependencies": { "p-defer": "^3.0.0" } }, "sha512-g2rtqPjdroaboDKTsJCTlcmtw54E25OjyaunUP0anOZn4Fuo2IKs8BVfe02zVggA/UysbmfSnRJIqtNkAgggNA=="],
 
     "react-native-gesture-handler": ["react-native-gesture-handler@2.28.0", "", { "dependencies": { "@egjs/hammerjs": "^2.0.17", "hoist-non-react-statics": "^3.3.0", "invariant": "^2.2.4" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-0msfJ1vRxXKVgTgvL+1ZOoYw3/0z1R+Ked0+udoJhyplC2jbVKIJ8Z1bzWdpQRCV3QcQ87Op0zJVE5DhKK2A0A=="],
+
+    "react-native-global-exception-handler": ["react-native-global-exception-handler@1.0.2", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-I9eM05xOzl+9nT6IIR/+TPPrai0GC8BC7wwkabAP+JuM/yfjD0dU7Do2m2Qb1u0L0se8sXaAkIbXWYqIIsy6DQ=="],
 
     "react-native-haptic-feedback": ["react-native-haptic-feedback@2.3.3", "", { "peerDependencies": { "react-native": ">=0.60.0" } }, "sha512-svS4D5PxfNv8o68m9ahWfwje5NqukM3qLS48+WTdhbDkNUkOhP9rDfDSRHzlhk4zq+ISjyw95EhLeh8NkKX5vQ=="],
 
