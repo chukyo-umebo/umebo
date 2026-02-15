@@ -17,8 +17,8 @@ class GoogleSignInService {
 
     public async init() {
         GoogleSignin.configure({
-            hostedDomain: "m.chukyo-u.ac.jp",
-            webClientId: "293922024536-gji1lfv0ij6m36posdfodh5k3n79260n.apps.googleusercontent.com",
+            hostedDomain: authRepository.allowedMailDomain,
+            webClientId: authRepository.webClientId,
             offlineAccess: true,
         });
     }
@@ -63,11 +63,11 @@ class GoogleSignInService {
 
             // メールドメインの検証
             const email = response.data.user.email;
-            if (!email.endsWith("m.chukyo-u.ac.jp")) {
+            if (!email.endsWith(authRepository.allowedMailDomain)) {
                 return {
                     kind: "invalid-domain",
                     email,
-                    allowedDomain: "m.chukyo-u.ac.jp",
+                    allowedDomain: authRepository.allowedMailDomain,
                 };
             }
 

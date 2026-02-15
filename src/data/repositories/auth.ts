@@ -1,3 +1,5 @@
+import { getRemoteConfig, getValue } from "@react-native-firebase/remote-config";
+
 import { firebaseProvider } from "../provider/firebase";
 import { storageProvider } from "../provider/storage";
 import { umeboapiProvider } from "../provider/umebo-api";
@@ -14,6 +16,14 @@ class AuthRepository {
         this.umeboapiProvider = _umeboapiProvider;
         this.firebaseProvider = _firebaseProvider;
         this.storageProvider = _storageProvider;
+    }
+
+    get allowedMailDomain(): string {
+        return getValue(getRemoteConfig(), "allowedMailDomain").asString();
+    }
+
+    get webClientId(): string {
+        return getValue(getRemoteConfig(), "webClientId").asString();
     }
 
     public async loginUmeboAPI(): Promise<string> {
