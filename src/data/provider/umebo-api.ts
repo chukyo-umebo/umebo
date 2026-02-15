@@ -1,4 +1,4 @@
-import { UMEBO_API_URLS } from "@/constants/urls";
+import { UMEBO_API_URLS } from "@/common/constants/urls";
 import { httpClient, HttpClientOptions } from "../clients/httpClient";
 
 class UMEBOAPIProvider {

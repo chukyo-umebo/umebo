@@ -3,9 +3,9 @@ import { Platform, View } from "react-native";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import CookieManager, { Cookies } from "@react-native-cookies/cookies";
 
-import { CHUKYO_SHIBBOLETH_URLS } from "@/constants/urls";
-import { UnauthorizedError } from "@/errors/auth";
-import { TimeoutError } from "@/errors/network";
+import { CHUKYO_SHIBBOLETH_URLS } from "@/common/constants/urls";
+import { UnauthorizedError } from "@/common/errors/auth";
+import { TimeoutError } from "@/common/errors/network";
 
 export interface Credential {
     enterUrl: string;

@@ -1,7 +1,7 @@
 import { Cookies } from "@react-native-cookies/cookies";
 
+import { AuthProcessError } from "@/common/errors/auth";
 import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
-import { AuthProcessError } from "@/errors/auth";
 
 export interface CookieCredentials {
     cookies: Cookies;

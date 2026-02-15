@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 import * as Application from "expo-application";
 import { fetch } from "expo/fetch";
 
-import { ChukyoMaintenanceError, NetworkError, TimeoutError, UMEBOAPIMaintenanceError } from "@/errors/network";
+import { ChukyoMaintenanceError, NetworkError, TimeoutError, UMEBOAPIMaintenanceError } from "@/common/errors/network";
 
 const DEFAULT_TIMEOUT_MS = 10000;
 

@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { Text } from "@/components/ui/text";
+import { Text } from "../../ui/text";
 
 type IClassCardProps = Omit<
     React.ComponentPropsWithRef<typeof View> & {

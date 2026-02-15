@@ -1,7 +1,7 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-import { updateAuthState } from "@/contexts/AuthStateContext";
 import { authRepository } from "@/data/repositories/auth";
+import { updateAuthState } from "@/presentation/contexts/AuthStateContext";
 
 class authService {
     private authRepository: typeof authRepository;

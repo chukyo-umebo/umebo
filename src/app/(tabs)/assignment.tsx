@@ -1,8 +1,8 @@
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
-import { MainTemplate } from "@/components/template/main";
-import { Accordion, AccordionItem } from "@/components/ui/accordion";
-import { Text } from "@/components/ui/text";
+import { MainTemplate } from "@/presentation/components/template/main";
+import { Accordion, AccordionItem } from "@/presentation/components/ui/accordion";
+import { Text } from "@/presentation/components/ui/text";
 
 export default function Index() {
     const dateStrip = {

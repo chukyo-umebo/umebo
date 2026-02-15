@@ -1,15 +1,15 @@
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 
-import { ClassCard } from "@/components/parts/class-card";
-import { QuickAccessIcon } from "@/components/parts/quick-access-icon";
-import { MainTemplate } from "@/components/template/main";
-import { Badge, BadgeText } from "@/components/ui/badge";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ContentScrollView } from "@/components/ui/content-scroll-view";
-import { Text } from "@/components/ui/text";
 import { firebaseProvider } from "@/data/provider/firebase";
+import { ClassCard } from "@/presentation/components/parts/class-card";
+import { QuickAccessIcon } from "@/presentation/components/parts/quick-access-icon";
+import { MainTemplate } from "@/presentation/components/template/main";
+import { Badge, BadgeText } from "@/presentation/components/ui/badge";
+import { Button, ButtonText } from "@/presentation/components/ui/button";
+import { Card } from "@/presentation/components/ui/card";
+import { ContentScrollView } from "@/presentation/components/ui/content-scroll-view";
+import { Text } from "@/presentation/components/ui/text";
 
 export default function Index() {
     const router = useRouter();

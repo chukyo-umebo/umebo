@@ -5,9 +5,9 @@ import "dayjs/locale/ja";
 import React from "react";
 import { View } from "react-native";
 
-import { MainTemplate } from "@/components/template/main";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { MainTemplate } from "@/presentation/components/template/main";
+import { Button, ButtonText } from "@/presentation/components/ui/button";
+import { Text } from "@/presentation/components/ui/text";
 
 const events = [
     {

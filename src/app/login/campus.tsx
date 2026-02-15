@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { Button, ButtonText } from "@/presentation/components/ui/button";
+import { Text } from "@/presentation/components/ui/text";
 
 export default function CampusScreen() {
     const router = useRouter();

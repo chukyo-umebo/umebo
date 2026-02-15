@@ -1,6 +1,6 @@
 import { TouchableOpacity, View } from "react-native";
 
-import { Text } from "@/components/ui/text";
+import { Text } from "../../ui/text";
 
 type QuickAccessIconProps = {
     name: string;

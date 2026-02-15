@@ -3,7 +3,7 @@ import Animated, { SharedValue } from "react-native-reanimated";
 import { EdgeInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { Text } from "@/components/ui/text";
+import { Text } from "@/presentation/components/ui/text";
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 

@@ -1,8 +1,8 @@
 import { Alert } from "react-native";
 import { toast } from "@backpackapp-io/react-native-toast";
 
-import { ShouldReSignInError } from "./errors/auth";
-import { AuthService } from "./services/auth";
+import { AuthService } from "@/domain/services/auth";
+import { ShouldReSignInError } from "./common/errors/auth";
 
 export function handleError(error: Error, isFatal: boolean) {
     console.log("JS Exception:", error, isFatal);

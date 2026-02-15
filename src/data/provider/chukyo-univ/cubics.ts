@@ -1,7 +1,7 @@
-import { CUBICS_URLS } from "@/constants/urls";
+import { CUBICS_URLS } from "@/common/constants/urls";
+import { ExpiredSessionError } from "@/common/errors/auth";
 import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
 import { httpClient, HttpClientOptions } from "@/data/clients/httpClient";
-import { ExpiredSessionError } from "@/errors/auth";
 import { AbstractChukyoProvider } from "./abstractChukyoProvider";
 
 class CubicsProvider extends AbstractChukyoProvider {

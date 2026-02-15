@@ -8,14 +8,14 @@ import { Toasts } from "@backpackapp-io/react-native-toast";
 import { getAnalytics, logEvent } from "@react-native-firebase/analytics";
 import * as firebase from "@react-native-firebase/app";
 
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-import { AuthStateProvider, useAuthState } from "@/contexts/AuthStateContext";
-import { ChukyoShibbolethProvider } from "@/contexts/ChukyoShibbolethContext";
+import { GluestackUIProvider } from "@/presentation/components/ui/gluestack-ui-provider";
+import { AuthStateProvider, useAuthState } from "@/presentation/contexts/AuthStateContext";
+import { ChukyoShibbolethProvider } from "@/presentation/contexts/ChukyoShibbolethContext";
 
 import "./global.css";
 
 import ChukyoShibbolethWebView, { shibbolethWebViewRef } from "@/data/clients/chukyo-shibboleth";
-import { googleSignInService } from "@/services/google-signin";
+import { googleSignInService } from "@/domain/services/google-signin";
 
 // @@iconify-code-gen
 

@@ -7,7 +7,7 @@ import {
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { jwtDecode } from "jwt-decode";
 
-import { ShouldReSignInError } from "@/errors/auth";
+import { ShouldReSignInError } from "@/common/errors/auth";
 
 class FirebaseProvider {
     private firebaseIdToken: string | null = null;

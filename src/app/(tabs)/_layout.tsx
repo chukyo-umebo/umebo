@@ -1,8 +1,8 @@
 import React from "react";
 import { Stack, useSegments } from "expo-router";
 
-import { MainFooter } from "@/components/parts/footer";
-import HeaderGradient from "@/components/template/main/HeaderGradient";
+import { MainFooter } from "@/presentation/components/parts/footer";
+import HeaderGradient from "@/presentation/components/template/main/HeaderGradient";
 
 export default function TabsLayout() {
     const segments = useSegments();

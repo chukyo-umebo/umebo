@@ -5,9 +5,9 @@ import { useRouter } from "expo-router";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { googleSignInService } from "@/services/google-signin";
+import { googleSignInService } from "@/domain/services/google-signin";
+import { Button, ButtonText } from "@/presentation/components/ui/button";
+import { Text } from "@/presentation/components/ui/text";
 
 export default function LoginScreen() {
     const router = useRouter();

@@ -1,4 +1,4 @@
-import { MANABO_URLS } from "@/constants/urls";
+import { MANABO_URLS } from "@/common/constants/urls";
 import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
 import { httpClient, HttpClientOptions } from "@/data/clients/httpClient";
 import { AbstractChukyoProvider } from "./abstractChukyoProvider";
