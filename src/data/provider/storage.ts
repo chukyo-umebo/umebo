@@ -1,7 +1,14 @@
 import * as SecureStore from "expo-secure-store";
 
 class StorageProvider {
-    private readonly namespace = "umebo";
+    private readonly namespace: string;
+
+    /**
+     * @param namespace ストレージ内でのキーのプレフィックス。異なる用途でキャッシュを分けたい場合に指定します。(英数字 or _ or -)の文字列を推奨します。
+     */
+    constructor(namespace = "umebo-storage") {
+        this.namespace = namespace;
+    }
 
     /* --- Secure Store --- */
     async getStudentId(): Promise<string | null> {

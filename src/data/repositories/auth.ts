@@ -1,6 +1,6 @@
 import { firebaseProvider } from "../provider/firebase";
 import { storageProvider } from "../provider/storage";
-import { umeboapiProvider } from "../provider/umeboapi";
+import { umeboapiProvider } from "../provider/umebo-api";
 
 class AuthRepository {
     private umeboapiProvider: typeof umeboapiProvider;
@@ -16,11 +16,12 @@ class AuthRepository {
         this.storageProvider = _storageProvider;
     }
 
-    public async loginUmeboAPI(): Promise<Response> {
+    public async loginUmeboAPI(): Promise<string> {
         const firebaseIdToken = await this.firebaseProvider.getFirebaseIdToken();
 
         return this.umeboapiProvider.login(firebaseIdToken);
     }
+
     public async isLoggedIn(): Promise<boolean> {
         const studentId = await this.storageProvider.getStudentId();
         const password = await this.storageProvider.getPassword();
