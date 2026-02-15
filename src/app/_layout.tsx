@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
+import { Stack, useGlobalSearchParams, usePathname, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import { Toasts } from "@backpackapp-io/react-native-toast";
@@ -15,12 +15,36 @@ import { ChukyoShibbolethProvider } from "@/presentation/contexts/ChukyoShibbole
 import "./global.css";
 
 import ChukyoShibbolethWebView, { shibbolethWebViewRef } from "@/data/clients/chukyo-shibboleth";
+import { appInfoRepository } from "@/data/repositories/app-info";
 import { googleSignInService } from "@/domain/services/google-signin";
 
 // @@iconify-code-gen
 
 function Routes() {
     const { isLoggedIn } = useAuthState();
+    const router = useRouter();
+
+    // すぐにやるとios版でrouteが設定されておらずエラーを吐くことがあるため仕方なくsetTimeoutする
+    setTimeout(() => {
+        // 開発モード時はメンテナンス・強制アップデート画面にリダイレクトしない
+        if (__DEV__) {
+            return;
+        }
+
+        if (appInfoRepository.isUnderMaintenance()) {
+            if (router.canDismiss()) {
+                router.dismissAll();
+            }
+            router.replace("/maintenance");
+        }
+
+        if (appInfoRepository.isNeededUpdate()) {
+            if (router.canDismiss()) {
+                router.dismissAll();
+            }
+            router.replace("/force-update");
+        }
+    }, 10);
 
     return (
         <Stack
@@ -33,6 +57,8 @@ function Routes() {
                 <Stack.Screen name="(tabs)" />
             </Stack.Protected>
             <Stack.Screen name="login" />
+            <Stack.Screen name="maintenance" />
+            <Stack.Screen name="force-update" />
         </Stack>
     );
 }

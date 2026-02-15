@@ -1,10 +1,14 @@
-import { fetchAndActivate, getRemoteConfig, setDefaults } from "@react-native-firebase/remote-config";
+import {
+    fetchAndActivate as fb_fetchAndActivate,
+    getRemoteConfig,
+    setDefaults,
+} from "@react-native-firebase/remote-config";
 
 export class RemoteConfigProvider {
     /**
      * Firebase Remote Configから最新の設定を取得し、アプリケーションに反映させます。
      */
-    async fetchRemoteConfig(): Promise<void> {
+    async fetchAndActivate(): Promise<void> {
         const remoteConfig = getRemoteConfig();
 
         await setDefaults(remoteConfig, {
@@ -17,7 +21,7 @@ export class RemoteConfigProvider {
             webClientId: "293922024536-gji1lfv0ij6m36posdfodh5k3n79260n.apps.googleusercontent.com",
         });
 
-        const fetchedRemotely = await fetchAndActivate(remoteConfig);
+        const fetchedRemotely = await fb_fetchAndActivate(remoteConfig);
         if (fetchedRemotely) {
             console.log("[Firebase Remote Config] firebaseから設定を取得して有効化しました。");
         } else {

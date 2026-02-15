@@ -37,7 +37,7 @@ class AppInfoRepository {
         return this.compareVersions(this.currentVersion, this.minimumVersion) < 0;
     }
 
-    public isNowMaintenanceMode(): boolean {
+    public isUnderMaintenance(): boolean {
         return getValue(getRemoteConfig(), "maintenanceMode").asBoolean();
     }
 
