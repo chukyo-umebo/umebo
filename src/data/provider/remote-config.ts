@@ -5,6 +5,13 @@ import {
 } from "@react-native-firebase/remote-config";
 
 export class RemoteConfigProvider {
+    constructor() {
+        // コンストラクタでfetchAndActivateを呼び出して、アプリ起動時に最新のリモートコンフィグを取得する
+        this.fetchAndActivate().catch((e) => {
+            console.error("Firebase Remote Configの取得に失敗しました:", e);
+        });
+    }
+
     /**
      * Firebase Remote Configから最新の設定を取得し、アプリケーションに反映させます。
      */

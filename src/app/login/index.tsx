@@ -15,7 +15,7 @@ export default function LoginScreen() {
     useEffect(() => {
         googleSignInService.silentSignIn().then((isSuccess) => {
             if (isSuccess) {
-                router.push("/login/campus");
+                router.replace("/login/campus");
             }
         });
     }, [router]);

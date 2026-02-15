@@ -70,7 +70,7 @@ export const CUBICS_URLS = {
 /** Albo（ポータルサイト）関連URL */
 export const ALBO_URLS = {
     /** ベースURL */
-    base: "https://albo.chukyo-u.ac.jp/",
+    base: "https://albo.chukyo-u.ac.jp",
     /** ログインURL */
     login: "https://albo.chukyo-u.ac.jp/api/saml/login",
 } as const;
