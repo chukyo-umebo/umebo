@@ -2,6 +2,7 @@ import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { firebaseProvider } from "@/data/provider/firebase";
+import { AuthService } from "@/domain/services/auth";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { QuickAccessIcon } from "@/presentation/components/parts/quick-access-icon";
 import { MainTemplate } from "@/presentation/components/template/main";
@@ -31,6 +32,13 @@ export default function Index() {
                     }}
                 >
                     <ButtonText>Get Firebase ID Token</ButtonText>
+                </Button>
+                <Button
+                    onPress={async () => {
+                        AuthService.signOut();
+                    }}
+                >
+                    <ButtonText>ログアウト</ButtonText>
                 </Button>
             </View>
 
