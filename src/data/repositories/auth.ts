@@ -1,5 +1,5 @@
 import { getRemoteConfig, getValue } from "@react-native-firebase/remote-config";
-import z from "zod";
+import { z } from "zod";
 
 import { firebaseProvider } from "../provider/firebase";
 import { storageProvider } from "../provider/storage";
