@@ -1,8 +1,10 @@
 import { getRemoteConfig, getValue } from "@react-native-firebase/remote-config";
+import z from "zod";
 
 import { firebaseProvider } from "../provider/firebase";
 import { storageProvider } from "../provider/storage";
 import { umeboapiProvider } from "../provider/umebo-api";
+import { V1MessageSchema } from "../types/umebo-api-schema";
 
 class AuthRepository {
     private umeboapiProvider: typeof umeboapiProvider;
@@ -26,7 +28,7 @@ class AuthRepository {
         return getValue(getRemoteConfig(), "webClientId").asString();
     }
 
-    public async loginUmeboAPI(): Promise<string> {
+    public async loginUmeboAPI(): Promise<z.infer<typeof V1MessageSchema>> {
         const firebaseIdToken = await this.firebaseProvider.getFirebaseIdToken();
 
         return this.umeboapiProvider.login(firebaseIdToken);

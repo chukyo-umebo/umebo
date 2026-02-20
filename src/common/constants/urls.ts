@@ -1,9 +1,5 @@
 import { Platform } from "react-native";
 
-
-
-
-
 function devHelper(devValue: string | undefined, prodValue: string): string {
     if (__DEV__) {
         if (typeof devValue === "undefined") {

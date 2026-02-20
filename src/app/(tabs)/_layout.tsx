@@ -13,7 +13,7 @@ export default function TabsLayout() {
     // 取得内容は適宜調整
     const notification = {
         message: "今日が期限の課題が2つあります",
-        color: "#e90000"
+        color: "#e90000",
     };
 
     return (
@@ -33,27 +33,23 @@ export default function TabsLayout() {
                 <Stack.Screen name="timetable" />
             </Stack>
 
-
-            {(
-                <View className="absolute bottom-[92px] left-0 right-0 items-center pointer-events-none z-50">
-
+            {
+                <View className="pointer-events-none absolute bottom-[92px] left-0 right-0 z-50 items-center">
                     {/*バナー本体*/}
                     <View
                         style={{ backgroundColor: notification.color }}
-                        className="px-6 py-2 rounded-full shadow-sm flex-row items-center mb-1"
+                        className="mb-1 flex-row items-center rounded-full px-6 py-2 shadow-sm"
                     >
-                        <Text className="text-white font-bold text-xs text-center">
-                            {notification.message}
-                        </Text>
+                        <Text className="text-center text-xs font-bold text-white">{notification.message}</Text>
                     </View>
 
                     {/*吹き出しの三角*/}
                     <View
-                        className="absolute bottom-0 left-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px]"
+                        className="absolute bottom-0 left-1/2 h-0 w-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent"
                         style={{ borderTopColor: notification.color, transform: [{ translateX: -6 }] }}
                     />
                 </View>
-            )}
+            }
 
             <MainFooter activeTab={getActiveTabFromSegment(lastSegment)} />
         </>
