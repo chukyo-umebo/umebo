@@ -1,5 +1,9 @@
 import { Platform } from "react-native";
 
+
+
+
+
 function devHelper(devValue: string | undefined, prodValue: string): string {
     if (__DEV__) {
         if (typeof devValue === "undefined") {
@@ -34,7 +38,7 @@ export const PASSPAL_URLS = {
 // ============================================
 export const UMEBO_API_URLS = {
     /** ベースURL */
-    base: devHelper(process.env.EXPO_PUBLIC_UMEBO_API_BASE_URL, "https://api.ume.bo/v1"),
+    base: devHelper(process.env.EXPO_PUBLIC_UMEBO_API_BASE_URL, "https://api.chukyo-passpal.app"),
 } as const;
 
 // ============================================
