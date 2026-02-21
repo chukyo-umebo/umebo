@@ -13,13 +13,13 @@ import { umeboapiProvider } from "../provider/umebo-api";
 import { authRepository } from "./auth";
 
 class TimetableRepository {
-    readonly cubicsProvider: typeof cubicsProvider;
-    readonly manaboProvider: typeof manaboProvider;
-    readonly alboProvider: typeof alboProvider;
-    readonly cacheProvider: typeof cacheProvider;
-    readonly firebaseProvider: typeof firebaseProvider;
-    readonly umeboApiRepository: typeof umeboapiProvider;
-    readonly authRepository: typeof authRepository;
+    private readonly cubicsProvider: typeof cubicsProvider;
+    private readonly manaboProvider: typeof manaboProvider;
+    private readonly alboProvider: typeof alboProvider;
+    private readonly cacheProvider: typeof cacheProvider;
+    private readonly firebaseProvider: typeof firebaseProvider;
+    private readonly umeboApiRepository: typeof umeboapiProvider;
+    private readonly authRepository: typeof authRepository;
     constructor(
         _cubicsProvider = cubicsProvider,
         _manaboProvider = manaboProvider,
@@ -38,9 +38,9 @@ class TimetableRepository {
         this.authRepository = _authRepository;
     }
 
-    public async getTimetable(chacheOnly = false): Promise<z.infer<typeof V1TimetableSchema>> {
-        if (chacheOnly) {
-            const cached = await cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
+    public async getTimetable(cacheOnly = false): Promise<z.infer<typeof V1TimetableSchema>> {
+        if (cacheOnly) {
+            const cached = await this.cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
             if (cached) {
                 return cached.value;
             } else {
@@ -51,10 +51,10 @@ class TimetableRepository {
             const apiTimetable = await this.umeboApiRepository.getTimetable(
                 await this.firebaseProvider.getFirebaseIdToken()
             );
-            cacheProvider.set("class-timetable", apiTimetable);
+            this.cacheProvider.set("class-timetable", apiTimetable);
             return apiTimetable;
         } catch (e) {
-            const cached = await cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
+            const cached = await this.cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
             if (cached) {
                 return cached.value;
             }
