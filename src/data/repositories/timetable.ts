@@ -55,7 +55,6 @@ class TimetableRepository {
     }
 
     public async updateTimetable(shibAuth: shibbolethWebViewAuthFunction) {
-        const firebaseId = await this.firebaseProvider.getFirebaseIdToken();
         const studentId = await this.authRepository.getStudentId();
         const password = await this.authRepository.getPassword();
         if (!studentId || !password) {
@@ -162,9 +161,6 @@ class TimetableRepository {
                 }
             }
         }
-
-        await this.umeboApiRepository.postTimetable(firebaseId, newTimetable);
-        return await this.getTimetable();
     }
 }
 
