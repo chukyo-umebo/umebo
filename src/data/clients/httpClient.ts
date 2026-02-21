@@ -18,7 +18,7 @@ type HttpClientOptions = RequestInit & {
  * @returns `アプリ名/バージョン (OS)`形式のUser-Agent文字列
  */
 const buildUserAgent = (): string => {
-    const appName = Application.applicationName ?? "UMEBO";
+    const appName = "UMEBO";
     const appVersion = Application.nativeApplicationVersion ?? "unknown";
     const os = Platform.OS ?? "unknown";
 

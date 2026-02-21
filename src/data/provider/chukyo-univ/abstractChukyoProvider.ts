@@ -12,7 +12,6 @@ export abstract class AbstractChukyoProvider {
     protected abstract readonly baseUrl: string;
     protected abstract readonly authEnterPath: string;
     protected abstract readonly authGoalPath: string;
-    protected abstract readonly serviceName: "manabo" | "albo" | "cubics";
     protected credentialsRottenTime: number = 25 * 60 * 1000; // 25分
 
     private authCookie: CookieCredentials = {
@@ -28,17 +27,6 @@ export abstract class AbstractChukyoProvider {
             cookies: {},
             lastRefreshedAt: new Date(0),
         };
-    }
-
-    /**
-     * クッキーのキーに基づき保存対象かどうかを判定します。
-     * @param key 判定対象のクッキーキー
-     * @returns 保存すべき場合はtrue、除外すべき場合はfalse
-     */
-    private shouldSaveCookie(key: string): boolean {
-        if (key.startsWith("AWSALB")) return false;
-        if (key.startsWith("_opensaml_req_ss")) return false;
-        return true;
     }
 
     /**
@@ -73,20 +61,13 @@ export abstract class AbstractChukyoProvider {
             password,
         });
 
-        // AWSALB クッキーを除去
-        const cleanedCookies: Cookies = {};
-        for (const [key, value] of Object.entries(cookies)) {
-            if (this.shouldSaveCookie(key)) {
-                cleanedCookies[key] = value;
-            }
-        }
-
-        if (Object.keys(cleanedCookies).length === 0) {
+        if (Object.keys(cookies).length === 0) {
+            if (__DEV__) console.log("クッキーが取得できませんでした。");
             throw new AuthProcessError();
         }
 
-        this.setAuthCookie(cleanedCookies);
-        return cleanedCookies;
+        this.setAuthCookie(cookies);
+        return cookies;
     }
 
     /**
@@ -104,6 +85,7 @@ export abstract class AbstractChukyoProvider {
             cookies = this.authCookie.cookies;
         }
 
+        console.log(`; ${this.cookiesToString(cookies)}`);
         return `; ${this.cookiesToString(cookies)}`;
     }
 

@@ -1,3 +1,10 @@
+import {
+    parseAlboCalendar,
+    parseAlboInformation,
+    parseAlboPersonal,
+    parseAlboTimetable,
+} from "@chukyo-umebo/web_parser";
+
 import { ALBO_URLS } from "@/common/constants/urls";
 import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
 import { httpClient, HttpClientOptions } from "@/data/clients/httpClient";
@@ -7,7 +14,6 @@ class AlboProvider extends AbstractChukyoProvider {
     protected readonly baseUrl = ALBO_URLS.base;
     protected readonly authEnterPath = "/api/saml/login";
     protected readonly authGoalPath = "/dashboard";
-    protected readonly serviceName = "albo";
 
     /**
      * Alboサービスから認証付きでデータを取得
@@ -38,6 +44,63 @@ class AlboProvider extends AbstractChukyoProvider {
         });
 
         return await response.text();
+    }
+
+    public async getCalendar(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+        return parseAlboCalendar(
+            await this.fetch(
+                userId,
+                password,
+                "/api/calendar/?page_size=1000&calendar_source_uuid=ac304d66-b0a8-11f0-afed-06347f3ce845",
+                {
+                    method: "GET",
+                },
+                authFunc
+            )
+        );
+    }
+
+    public async getPersonal(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+        return parseAlboPersonal(
+            await this.fetch(
+                userId,
+                password,
+                "/api/auth/check-logged-in",
+                {
+                    method: "GET",
+                },
+                authFunc
+            )
+        );
+    }
+
+    public async getInformation(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+        return parseAlboInformation(
+            await this.fetch(
+                userId,
+                password,
+                "/api/information/1?page_size=20&category_uuid=",
+                // "/api/information/1?status=unread&page_size=10&category_uuid=&recursive=1",
+                {
+                    method: "GET",
+                },
+                authFunc
+            )
+        );
+    }
+
+    public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+        return parseAlboTimetable(
+            await this.fetch(
+                userId,
+                password,
+                "/api/class/time-table/",
+                {
+                    method: "GET",
+                },
+                authFunc
+            )
+        );
     }
 }
 

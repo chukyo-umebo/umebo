@@ -1,7 +1,10 @@
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 
+import { cubicsProvider } from "@/data/provider/chukyo-univ/cubics";
+import { manaboProvider } from "@/data/provider/chukyo-univ/manabo";
 import { firebaseProvider } from "@/data/provider/firebase";
+import { authRepository } from "@/data/repositories/auth";
 import { AuthService } from "@/domain/services/auth";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { QuickAccessIcon } from "@/presentation/components/parts/quick-access-icon";
@@ -11,9 +14,11 @@ import { Button, ButtonText } from "@/presentation/components/ui/button";
 import { Card } from "@/presentation/components/ui/card";
 import { ContentScrollView } from "@/presentation/components/ui/content-scroll-view";
 import { Text } from "@/presentation/components/ui/text";
+import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
 
 export default function Index() {
     const router = useRouter();
+    const { chukyoShibbolethAuth } = useChukyoShibboleth();
 
     return (
         <MainTemplate title="ホーム" subtitle="すぐに使いたい機能が揃ってます">
@@ -32,6 +37,30 @@ export default function Index() {
                     }}
                 >
                     <ButtonText>Get Firebase ID Token</ButtonText>
+                </Button>
+                <Button
+                    onPress={async () => {
+                        const calender = await cubicsProvider.getTimetable(
+                            (await authRepository.getStudentId()) || "",
+                            (await authRepository.getPassword()) || "",
+                            chukyoShibbolethAuth
+                        );
+                        console.log("cubics data:", JSON.stringify(calender, null));
+                    }}
+                >
+                    <ButtonText>fetch cubics data</ButtonText>
+                </Button>
+                <Button
+                    onPress={async () => {
+                        const calender = await manaboProvider.getTimetable(
+                            (await authRepository.getStudentId()) || "",
+                            (await authRepository.getPassword()) || "",
+                            chukyoShibbolethAuth
+                        );
+                        console.log("manabo data:", JSON.stringify(calender, null));
+                    }}
+                >
+                    <ButtonText>fetch manabo data</ButtonText>
                 </Button>
                 <Button
                     onPress={async () => {

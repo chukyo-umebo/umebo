@@ -64,7 +64,7 @@ export const STORE_URLS = {
 /** CUBICS（授業支援システム）関連URL */
 export const CUBICS_URLS = {
     /** ベースURL */
-    base: "https://cubics-as-out.mng.chukyo-u.ac.jp",
+    base: "https://cubics-as.chukyo-u.ac.jp",
 } as const;
 
 /** Albo（ポータルサイト）関連URL */

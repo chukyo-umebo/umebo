@@ -1,3 +1,5 @@
+import { parseCubicsAsTimetable } from "@chukyo-umebo/web_parser";
+
 import { CUBICS_URLS } from "@/common/constants/urls";
 import { ExpiredSessionError } from "@/common/errors/auth";
 import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
@@ -8,7 +10,6 @@ class CubicsProvider extends AbstractChukyoProvider {
     protected readonly baseUrl = CUBICS_URLS.base;
     protected readonly authEnterPath = "/unias/UnSSOLoginControl2";
     protected readonly authGoalPath = "/unias/UnSSOLoginControl2";
-    protected readonly serviceName = "cubics";
 
     protected readonly retryAuthCount = 3;
     protected readonly retryAuthDelayMs = 200;
@@ -86,6 +87,20 @@ class CubicsProvider extends AbstractChukyoProvider {
             }
         }
         return true;
+    }
+
+    public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+        return parseCubicsAsTimetable(
+            await this.fetch(
+                userId,
+                password,
+                "/unias/UnSSOLoginControl2?REQ_ACTION_DO=/ARF010.do&REQ_PRFR_MNU_ID=MNUIDSTD0103",
+                {
+                    method: "GET",
+                },
+                authFunc
+            )
+        );
     }
 }
 
