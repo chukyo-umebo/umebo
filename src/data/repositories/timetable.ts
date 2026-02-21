@@ -86,13 +86,23 @@ class TimetableRepository {
         };
 
         const dayOfWeekMap: Record<string, number> = { 日: 0, 月: 1, 火: 2, 水: 3, 木: 4, 金: 5, 土: 6 };
+        const dayOfWeekEnMap: Record<string, string> = {
+            日: "sun",
+            月: "mon",
+            火: "tue",
+            水: "wed",
+            木: "thu",
+            金: "fri",
+            土: "sat",
+        };
 
         for (const period of manaboTimetable.periods) {
             const periodNum = period.period;
             for (const slot of period.slots) {
                 if (slot.className) {
                     const dayStr = slot.day;
-                    const timetableStr = `${dayStr}${periodNum}`;
+                    const dayEnStr = dayOfWeekEnMap[dayStr] || "unknown";
+                    const timetableStr = `${dayEnStr}-${periodNum}`;
 
                     // manaboId の抽出 (例: "course_123456" -> "123456")
                     const manaboIdMatch = slot.href?.match(/course_(\d+)/);
