@@ -189,7 +189,7 @@ true; // note: this is required, or you'll sometimes get silent failures
     return (
         <>
             {isProcessing && (
-                <View style={{ height: 200 }} key={randomKey}>
+                <View style={{ height: 0 }} key={randomKey}>
                     <WebView
                         style={{ flex: 1 }}
                         source={{ uri: credential.enterUrl }}

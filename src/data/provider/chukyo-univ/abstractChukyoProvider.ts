@@ -85,7 +85,6 @@ export abstract class AbstractChukyoProvider {
             cookies = this.authCookie.cookies;
         }
 
-        console.log(`; ${this.cookiesToString(cookies)}`);
         return `; ${this.cookiesToString(cookies)}`;
     }
 

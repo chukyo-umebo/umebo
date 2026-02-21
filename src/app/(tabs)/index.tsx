@@ -1,10 +1,10 @@
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 
-import { cubicsProvider } from "@/data/provider/chukyo-univ/cubics";
 import { manaboProvider } from "@/data/provider/chukyo-univ/manabo";
 import { firebaseProvider } from "@/data/provider/firebase";
 import { authRepository } from "@/data/repositories/auth";
+import { timetableRepository } from "@/data/repositories/timetable";
 import { AuthService } from "@/domain/services/auth";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { QuickAccessIcon } from "@/presentation/components/parts/quick-access-icon";
@@ -40,15 +40,11 @@ export default function Index() {
                 </Button>
                 <Button
                     onPress={async () => {
-                        const calender = await cubicsProvider.getTimetable(
-                            (await authRepository.getStudentId()) || "",
-                            (await authRepository.getPassword()) || "",
-                            chukyoShibbolethAuth
-                        );
-                        console.log("cubics data:", JSON.stringify(calender, null));
+                        const calender = await timetableRepository.updateTimetable(chukyoShibbolethAuth);
+                        console.log("timetable data:", JSON.stringify(calender, null));
                     }}
                 >
-                    <ButtonText>fetch cubics data</ButtonText>
+                    <ButtonText>fetch timetable data</ButtonText>
                 </Button>
                 <Button
                     onPress={async () => {

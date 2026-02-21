@@ -16,17 +16,18 @@ import {
 import { httpClient, HttpClientOptions } from "../clients/httpClient";
 
 class UMEBOAPIProvider {
-    private async fetch(path: string, options: HttpClientOptions & { firebaseIdToken?: string }): Promise<string> {
+    private async fetch(path: string, options: HttpClientOptions & { firebaseIdToken?: string }): Promise<unknown> {
         const { firebaseIdToken, headers, ...httpOptions } = options || {};
         const response = await httpClient(`${UMEBO_API_URLS.base}${path}`, {
             clientMode: "umeboapi",
             headers: {
+                "content-type": "application/json",
                 ...headers,
-                ...(firebaseIdToken ? { Authentication: `Bearer ${firebaseIdToken}` } : {}),
+                ...(firebaseIdToken ? { Authorization: `Bearer ${firebaseIdToken}` } : {}),
             },
             ...httpOptions,
         });
-        return await response.text();
+        return await response.json();
     }
 
     public async login(firebaseIdToken: string): Promise<z.infer<typeof V1MessageSchema>> {

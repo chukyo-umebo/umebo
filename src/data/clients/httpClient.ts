@@ -111,7 +111,10 @@ export const httpClient = async (input: string | URL, options: HttpClientOptions
                 throw new UMEBOAPIMaintenanceError();
             }
 
-            if (__DEV__) console.error(`HTTP error: ${response.status} ${response.statusText} URL: ${url}`);
+            if (__DEV__)
+                console.log(
+                    `HTTP error: ${response.status} ${response.statusText}, ${await response.text()} URL: ${url}`
+                );
 
             throw new NetworkError({
                 cause: new Error(`HTTP error: ${response.status} ${response.statusText}`),
