@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { z } from "zod";
 
 import { V1TimetableSchema } from "@/common/types/umebo-api-schema";
@@ -44,23 +45,33 @@ export default function TimetableScreen() {
     const { chukyoShibbolethAuth } = useChukyoShibboleth();
     const [timetable, setTimetable] = useState<TimetableData | null>(null);
 
+    const onRefresh = useCallback(async () => {
+        try {
+            await toast.promise(timetableRepository.updateTimetable(chukyoShibbolethAuth), {
+                loading: "時間割を更新中...",
+                success: "時間割が更新されました",
+                error: "時間割の更新に失敗しました",
+            });
+        } catch (e) {
+            console.error("Failed to refresh timetable", e);
+        }
+    }, [chukyoShibbolethAuth]);
+
     const fetchTimetable = useCallback(async () => {
         try {
-            const data = await timetableRepository.getTimetable();
+            let chacheData = await timetableRepository.getTimetable(true);
+            setTimetable(chacheData);
+
+            let data = await timetableRepository.getTimetable();
+            if (data.classes.length === 0) {
+                await onRefresh();
+                data = await timetableRepository.getTimetable();
+            }
             setTimetable(data);
         } catch (e) {
             console.error("Failed to fetch timetable", e);
         }
-    }, []);
-
-    const onRefresh = useCallback(async () => {
-        try {
-            await timetableRepository.updateTimetable(chukyoShibbolethAuth);
-            await fetchTimetable();
-        } catch (e) {
-            console.error("Failed to refresh timetable", e);
-        }
-    }, [chukyoShibbolethAuth, fetchTimetable]);
+    }, [onRefresh]);
 
     useEffect(() => {
         fetchTimetable();
@@ -78,7 +89,10 @@ export default function TimetableScreen() {
         <MainTemplate
             title="時間割"
             subtitle="現在自分が履修している授業の時間割を確認できます"
-            refreshFunction={onRefresh}
+            refreshFunction={async () => {
+                await onRefresh();
+                await fetchTimetable();
+            }}
         >
             <View className="w-full items-center">
                 {/* Timetable Grid Container */}
@@ -102,11 +116,11 @@ export default function TimetableScreen() {
                             {/* Time Column */}
                             <View className="mr-1 w-[30px] items-center justify-center rounded-[44px] bg-[#f9f7f6] py-1">
                                 <Text className="text-[8px] font-semibold text-[#5d5b59]">
-                                    {PERIOD_TIMES[pIndex].start}
+                                    {PERIOD_TIMES[pIndex]!.start}
                                 </Text>
                                 <Text className="my-0.5 text-[10px] font-bold text-[#1b1a19]">{period}</Text>
                                 <Text className="text-[8px] font-semibold text-[#5d5b59]">
-                                    {PERIOD_TIMES[pIndex].end}
+                                    {PERIOD_TIMES[pIndex]!.end}
                                 </Text>
                             </View>
 

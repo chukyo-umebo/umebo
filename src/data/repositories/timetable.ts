@@ -38,7 +38,15 @@ class TimetableRepository {
         this.authRepository = _authRepository;
     }
 
-    public async getTimetable() {
+    public async getTimetable(chacheOnly = false): Promise<z.infer<typeof V1TimetableSchema>> {
+        if (chacheOnly) {
+            const cached = await cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
+            if (cached) {
+                return cached.value;
+            } else {
+                return { term: "", classes: [] };
+            }
+        }
         try {
             const apiTimetable = await this.umeboApiRepository.getTimetable(
                 await this.firebaseProvider.getFirebaseIdToken()
