@@ -2,27 +2,40 @@ import { Calendar } from "react-native-big-calendar";
 
 import "dayjs/locale/ja";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
+import { calendarRepository } from "@/data/repositories/calendar";
 import { MainTemplate } from "@/presentation/components/template/main";
 import { Button, ButtonText } from "@/presentation/components/ui/button";
 import { Text } from "@/presentation/components/ui/text";
+import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
 
-const events = [
-    {
-        title: "Meeting",
-        start: new Date(new Date().setDate(11)),
-        end: new Date(new Date().setDate(11)),
-    },
-    {
-        title: "Coffee break",
-        start: new Date(new Date().setDate(14)),
-        end: new Date(new Date().setDate(16)),
-    },
-];
 export default function Index() {
-    const [calendarDate, setCalendarDate] = React.useState(new Date());
+    const [calendarDate, setCalendarDate] = useState(new Date());
+    const [events, setEvents] = useState<{ title: string; start: Date; end: Date }[]>([]);
+    const { chukyoShibbolethAuth } = useChukyoShibboleth();
+
+    useEffect(() => {
+        const fetchCalendar = async () => {
+            try {
+                const data = await calendarRepository.getCalendar(chukyoShibbolethAuth);
+                if (data && data.result && data.result.items) {
+                    const formattedEvents = data.result.items.map((item) => ({
+                        title: item.summary,
+                        start: new Date(item.start_at > 10000000000 ? item.start_at : item.start_at * 1000),
+                        end: new Date(item.end_at > 10000000000 ? item.end_at : item.end_at * 1000),
+                    }));
+                    setEvents(formattedEvents);
+                }
+            } catch (error) {
+                console.error("Failed to fetch calendar:", error);
+            }
+        };
+
+        fetchCalendar();
+    }, [chukyoShibbolethAuth]);
+
     return (
         <MainTemplate title="カレンダー" subtitle="中京大学の年間スケジュールが書いてあります" noOverScroll>
             <View className="mb-4 flex-row items-center justify-between px-4">
