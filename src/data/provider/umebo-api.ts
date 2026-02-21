@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { UMEBO_API_URLS } from "@/common/constants/urls";
-import { httpClient, HttpClientOptions } from "../clients/httpClient";
 import {
     SchoolBusCalendarSchema,
     SchoolBusTimetableSchema,
@@ -13,7 +12,8 @@ import {
     V1PostAssignmentSchema,
     V1PostAttendanceSchema,
     V1TimetableSchema,
-} from "../types/umebo-api-schema";
+} from "@/common/types/umebo-api-schema";
+import { httpClient, HttpClientOptions } from "../clients/httpClient";
 
 class UMEBOAPIProvider {
     private async fetch(path: string, options: HttpClientOptions & { firebaseIdToken?: string }): Promise<string> {

@@ -1,10 +1,10 @@
 import { getRemoteConfig, getValue } from "@react-native-firebase/remote-config";
 import { z } from "zod";
 
+import { V1MessageSchema } from "../../common/types/umebo-api-schema";
 import { firebaseProvider } from "../provider/firebase";
 import { storageProvider } from "../provider/storage";
 import { umeboapiProvider } from "../provider/umebo-api";
-import { V1MessageSchema } from "../types/umebo-api-schema";
 
 class AuthRepository {
     private umeboapiProvider: typeof umeboapiProvider;
