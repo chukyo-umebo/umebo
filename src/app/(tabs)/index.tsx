@@ -1,10 +1,11 @@
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 import { manaboProvider } from "@/data/provider/chukyo-univ/manabo";
 import { firebaseProvider } from "@/data/provider/firebase";
+import { assignmentRepository } from "@/data/repositories/assignment";
 import { authRepository } from "@/data/repositories/auth";
-import { timetableRepository } from "@/data/repositories/timetable";
 import { AuthService } from "@/domain/services/auth";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { QuickAccessIcon } from "@/presentation/components/parts/quick-access-icon";
@@ -39,12 +40,23 @@ export default function Index() {
                     <ButtonText>Get Firebase ID Token</ButtonText>
                 </Button>
                 <Button
-                    onPress={async () => {
-                        const calender = await timetableRepository.updateTimetable(chukyoShibbolethAuth);
-                        console.log("timetable data:", JSON.stringify(calender, null));
+                    onPress={() => {
+                        toast.promise(assignmentRepository.updateAssignments(chukyoShibbolethAuth), {
+                            loading: "課題を更新しています...",
+                            success: "課題を更新しました",
+                            error: "課題の更新に失敗しました",
+                        });
                     }}
                 >
-                    <ButtonText>fetch timetable data</ButtonText>
+                    <ButtonText>update assignments</ButtonText>
+                </Button>
+                <Button
+                    onPress={async () => {
+                        const assignments = await assignmentRepository.getAssignments();
+                        console.log("assignments data:", JSON.stringify(assignments, null));
+                    }}
+                >
+                    <ButtonText>fetch assignments</ButtonText>
                 </Button>
                 <Button
                     onPress={async () => {

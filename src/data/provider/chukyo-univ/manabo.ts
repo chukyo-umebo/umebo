@@ -1,4 +1,5 @@
 import {
+    ManaboClassContentDTO,
     parseManaboClassContent,
     parseManaboClassDirectory,
     parseManaboClassEntry,
@@ -15,6 +16,7 @@ import {
     parseManaboSentMail,
     parseManaboTimetable,
 } from "@chukyo-umebo/web_parser";
+import { ZodSafeParseResult } from "zod";
 
 import { MANABO_URLS } from "@/common/constants/urls";
 import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
@@ -301,25 +303,24 @@ class ManaboProvider extends AbstractChukyoProvider {
         classId: string,
         directoryId: string = "0"
     ) {
-        return parseManaboClassDirectory(
-            await this.fetch(
-                userId,
-                password,
-                "/",
-                {
-                    method: "POST",
-                    body: new URLSearchParams({
-                        class_id: classId,
-                        directory_id: directoryId,
-                        action: "glexa_ajax_class_directory_list",
-                    }),
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
+        const fetched = await this.fetch(
+            userId,
+            password,
+            "/",
+            {
+                method: "POST",
+                body: new URLSearchParams({
+                    class_id: classId,
+                    directory_id: directoryId,
+                    action: "glexa_ajax_class_directory_list",
+                }),
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
-                authFunc
-            )
+            },
+            authFunc
         );
+        return parseManaboClassDirectory(fetched);
     }
 
     public async getClassContent(
@@ -329,7 +330,7 @@ class ManaboProvider extends AbstractChukyoProvider {
         classId: string,
         directoryId: string,
         viewType?: string
-    ) {
+    ): Promise<ZodSafeParseResult<ManaboClassContentDTO>> {
         return parseManaboClassContent(
             await this.fetch(
                 userId,

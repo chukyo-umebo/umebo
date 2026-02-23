@@ -45,42 +45,38 @@ export const V1AttendanceListSchema = z.object({
 
 /* ----- 課題関連 ----- */
 
-export const V1ClassAssignmentDetailSchema = z.object({
-    directory_id: z.string(),
-    content_id: z.string(),
-    name: z.string(),
+export const V1AssignmentClassDetailSchema = z
+    .object({
+        directoryId: z.string(),
+        contentId: z.string(),
+        name: z.string(),
+    })
+    .optional()
+    .nullable();
+
+export const V1BaseAssignmentSchema = z.object({
+    manaboId: z.string(),
+    dueAt: z.string().optional(),
+    doneAt: z.string().optional(),
+    classDetail: V1AssignmentClassDetailSchema,
+    appData: z.any(),
 });
 
-export const V1PostAssignmentSchema = z.object({
-    due_at: z.string(),
-    done_at: z.string(),
-    classAssignmentDetail: V1ClassAssignmentDetailSchema.optional(),
-    app_data: z.any(),
+export const V1PostAssignmentsSchema = z.object({
+    assignments: z.array(V1BaseAssignmentSchema),
 });
 
 export const V1PatchAssignmentSchema = z.object({
-    due_at: z.string(),
-    done_at: z.string(),
-    app_data: z.any(),
+    dueAt: z.string().optional(),
+    doneAt: z.string().optional(),
+    appData: z.any(),
 });
 
-export const V1AssignmentListSchema = z.object({
-    manabo_id: z.string(),
+export const V1AssignmentsSchema = z.object({
     assignments: z.array(
         z.object({
             id: z.string(),
-            due_at: z.string().nullable(),
-            done_at: z.string().nullable(),
-            app_data: z.any(),
-            class_assignment: z
-                .object({
-                    id: z.string(),
-                    directory_id: z.string(),
-                    content_id: z.string(),
-                    name: z.string(),
-                    due_at: z.string().nullable(),
-                })
-                .nullable(),
+            ...V1BaseAssignmentSchema.shape,
         })
     ),
 });

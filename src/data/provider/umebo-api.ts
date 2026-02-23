@@ -4,12 +4,12 @@ import { UMEBO_API_URLS } from "@/common/constants/urls";
 import {
     SchoolBusCalendarSchema,
     SchoolBusTimetableSchema,
-    V1AssignmentListSchema,
+    V1AssignmentsSchema,
     V1AttendanceListSchema,
     V1MessageSchema,
     V1PatchAssignmentSchema,
     V1PatchTimetableSchema,
-    V1PostAssignmentSchema,
+    V1PostAssignmentsSchema,
     V1PostAttendanceSchema,
     V1TimetableSchema,
 } from "@/common/types/umebo-api-schema";
@@ -144,12 +144,9 @@ class UMEBOAPIProvider {
         );
     }
 
-    public async getAssignments(
-        firebaseIdToken: string,
-        manaboId: string
-    ): Promise<z.infer<typeof V1AssignmentListSchema>> {
-        return V1AssignmentListSchema.parse(
-            await this.fetch(`/v1/assignment/${encodeURIComponent(manaboId)}`, {
+    public async getAssignments(firebaseIdToken: string): Promise<z.infer<typeof V1AssignmentsSchema>> {
+        return V1AssignmentsSchema.parse(
+            await this.fetch(`/v1/assignment`, {
                 method: "GET",
                 firebaseIdToken,
             })
@@ -158,11 +155,10 @@ class UMEBOAPIProvider {
 
     public async postAssignment(
         firebaseIdToken: string,
-        manaboId: string,
-        assignmentData: z.infer<typeof V1PostAssignmentSchema>
+        assignmentData: z.infer<typeof V1PostAssignmentsSchema>
     ): Promise<z.infer<typeof V1MessageSchema>> {
         return V1MessageSchema.parse(
-            await this.fetch(`/v1/assignment/${encodeURIComponent(manaboId)}`, {
+            await this.fetch(`/v1/assignment`, {
                 method: "POST",
                 body: JSON.stringify(assignmentData),
                 firebaseIdToken,
@@ -172,12 +168,11 @@ class UMEBOAPIProvider {
 
     public async patchAssignment(
         firebaseIdToken: string,
-        manaboId: string,
         assignmentId: string,
         assignmentData: z.infer<typeof V1PatchAssignmentSchema>
     ): Promise<z.infer<typeof V1MessageSchema>> {
         return V1MessageSchema.parse(
-            await this.fetch(`/v1/assignment/${encodeURIComponent(manaboId)}/${encodeURIComponent(assignmentId)}`, {
+            await this.fetch(`/v1/assignment/${encodeURIComponent(assignmentId)}`, {
                 method: "PATCH",
                 body: JSON.stringify(assignmentData),
                 firebaseIdToken,
@@ -187,11 +182,10 @@ class UMEBOAPIProvider {
 
     public async deleteAssignment(
         firebaseIdToken: string,
-        manaboId: string,
         assignmentId: string
     ): Promise<z.infer<typeof V1MessageSchema>> {
         return V1MessageSchema.parse(
-            await this.fetch(`/v1/assignment/${encodeURIComponent(manaboId)}/${encodeURIComponent(assignmentId)}`, {
+            await this.fetch(`/v1/assignment/${encodeURIComponent(assignmentId)}`, {
                 method: "DELETE",
                 firebaseIdToken,
             })

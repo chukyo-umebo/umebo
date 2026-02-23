@@ -6,7 +6,13 @@ export interface CacheEntry<T> {
     value: T;
 }
 
-export const CACHE_KEYS = ["bus-diagram", "bus-timetable", "class-timetable", "chukyo-calender"] as const;
+export const CACHE_KEYS = [
+    "bus-diagram",
+    "bus-timetable",
+    "class-timetable",
+    "chukyo-calender",
+    "assignments",
+] as const;
 export const CacheKeySchema = z.enum(CACHE_KEYS);
 export type CacheKey = (typeof CACHE_KEYS)[number];
 

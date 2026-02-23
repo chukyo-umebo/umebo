@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { ShouldReSignInError } from "@/common/errors/auth";
+import { ShouldRefreshTimetableError } from "@/common/errors/timetable";
 import { V1TimetableSchema } from "@/common/types/umebo-api-schema";
 import { buildTermString } from "@/utils";
 import { shibbolethWebViewAuthFunction } from "../clients/chukyo-shibboleth";
@@ -39,14 +40,15 @@ class TimetableRepository {
     }
 
     public async getTimetable(cacheOnly = false): Promise<z.infer<typeof V1TimetableSchema>> {
+        const term = buildTermString();
         if (cacheOnly) {
             const cached = await this.cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
-            if (cached) {
-                return cached.value;
-            } else {
-                return { term: "", classes: [] };
+            if (!cached || cached.value.term !== term) {
+                throw new ShouldRefreshTimetableError();
             }
+            return cached.value;
         }
+
         try {
             const apiTimetable = await this.umeboApiRepository.getTimetable(
                 await this.firebaseProvider.getFirebaseIdToken()
@@ -55,10 +57,10 @@ class TimetableRepository {
             return apiTimetable;
         } catch (e) {
             const cached = await this.cacheProvider.get<z.infer<typeof V1TimetableSchema>>("class-timetable");
-            if (cached) {
-                return cached.value;
+            if (!cached || cached.value.term !== term) {
+                throw e;
             }
-            throw e;
+            return cached.value;
         }
     }
 
@@ -112,13 +114,9 @@ class TimetableRepository {
                     const dayEnStr = dayOfWeekEnMap[dayStr] || "unknown";
                     const timetableStr = `${dayEnStr}-${periodNum}`;
 
-                    // manaboId の抽出 (例: "course_123456" -> "123456")
-                    const manaboIdMatch = slot.href?.match(/course_(\d+)/);
-                    const manaboId = manaboIdMatch
-                        ? manaboIdMatch[1] || ""
-                        : slot.href
-                          ? slot.href.split("_").pop() || ""
-                          : "";
+                    // manaboId の抽出
+                    const manaboIdMatch = slot.href?.match(/class\/(\d+)/);
+                    const manaboId = manaboIdMatch ? manaboIdMatch[1] || slot.href : slot.href;
 
                     // cubicsId の取得
                     let cubicsId: string | undefined = undefined;
@@ -161,7 +159,7 @@ class TimetableRepository {
                     } else {
                         newTimetable.classes.push({
                             name: slot.className,
-                            manaboId: manaboId,
+                            manaboId: manaboId || "",
                             alboId: alboId ?? undefined,
                             cubicsId: cubicsId ?? undefined,
                             timetable: [timetableStr],
