@@ -23,7 +23,12 @@ export function ClassCard({ subject, ...props }: IClassCardProps) {
                         </Text>
                     </View>
                     <View className="rounded-full bg-background px-1.5 py-0.5">
-                        <Text className="text-center text-[0.7rem] font-medium" style={{ color: subject.color }}>
+                        <Text
+                            className="text-center text-[0.7rem] font-medium"
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={{ color: subject.color }}
+                        >
                             {subject.room}
                         </Text>
                     </View>
