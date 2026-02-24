@@ -108,7 +108,11 @@ class AssignmentRepository {
                             contentId: asg.contentId,
                             name: asg.title,
                         },
-                        appData: {},
+                        appData: {
+                            directoryName: dir.directoryName,
+                            title: asg.title,
+                            description: asg.description,
+                        },
                     });
                 }
             }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,12 +16,14 @@ export function MainTemplate({
     subtitle,
     children,
     noOverScroll = false,
+    scrollViewRef,
 }: {
     refreshFunction?: () => Promise<any>;
     title: string;
     subtitle: string;
     children?: React.ReactNode;
     noOverScroll?: boolean;
+    scrollViewRef?: RefObject<ScrollView | null>;
 }) {
     const insets = useSafeAreaInsets();
 
@@ -56,6 +58,7 @@ export function MainTemplate({
     return (
         <View className="flex-1">
             <ScrollView
+                ref={scrollViewRef}
                 className="flex-1"
                 showsVerticalScrollIndicator={false}
                 stickyHeaderIndices={[0]}

@@ -73,10 +73,9 @@ export function AccordionItem({
                     {rightAccessory}
                     {showChevron ? (
                         <Iconify
-                            icon="octicon:chevron-down-12"
+                            icon={isExpanded ? "octicon:chevron-up-12" : "octicon:chevron-down-12"}
                             size={chevronSize}
                             color={chevronColor}
-                            style={{ transform: [{ rotate: isExpanded ? "0deg" : "-180deg" }] }}
                         />
                     ) : null}
                 </View>

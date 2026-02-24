@@ -1,133 +1,266 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
+import { z } from "zod";
 
+import { V1AssignmentsSchema } from "@/common/types/umebo-api-schema";
+import { assignmentRepository } from "@/data/repositories/assignment";
 import { MainTemplate } from "@/presentation/components/template/main";
 import { Accordion, AccordionItem } from "@/presentation/components/ui/accordion";
 import { Text } from "@/presentation/components/ui/text";
 
-export default function Index() {
-    const dateStrip = {
-        todayLabel: "2025/10/23",
-        dates: [
-            { id: "2025-10-22", day: "22", weekday: "MON", isSelected: true },
-            { id: "2025-10-23", day: "23", weekday: "TUE" },
-            { id: "2025-10-24", day: "24", weekday: "WED" },
-            { id: "2025-10-25", day: "25", weekday: "THU" },
-            { id: "2025-10-26", day: "26", weekday: "FRI" },
-            { id: "2025-10-27", day: "27", weekday: "SAT" },
-            { id: "2025-10-28", day: "28", weekday: "SUN" },
-        ],
-    };
+const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-    const assignmentGroups: {
-        id: string;
-        dueDate: string;
-        remainingLabel?: string;
-        remainingTone?: "default" | "urgent";
-        emoji?: string;
-        defaultExpanded?: boolean;
-        items: AssignmentItemData[];
-    }[] = [
-        {
-            id: "group-urgent",
-            dueDate: "2026/02/23",
-            remainingLabel: "あと1日",
-            remainingTone: "urgent" as const,
-            emoji: "😱",
-            defaultExpanded: true,
-            items: [
-                {
-                    id: "item-1",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    isCompleted: true,
-                    isHighlighted: true,
-                },
-                {
-                    id: "item-2",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    dueTimeLabel: "16:00まで",
-                },
-                {
-                    id: "item-3",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    dueTimeLabel: "16:00まで",
-                },
-            ],
+type Assignment = z.infer<typeof V1AssignmentsSchema>["assignments"][number];
+
+function pad2(value: number) {
+    return value.toString().padStart(2, "0");
+}
+
+function toDateKey(date: Date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+function formatDateFromKey(dateKey: string) {
+    return dateKey.replace(/-/g, "/");
+}
+
+function toDayLabel(dateKey: string) {
+    return dateKey.slice(-2);
+}
+
+function toWeekdayLabel(dateKey: string) {
+    const date = new Date(`${dateKey}T00:00:00`);
+    return WEEKDAY_LABELS[date.getDay()] ?? "SUN";
+}
+
+function toDueDateKey(assignment: Assignment) {
+    if (!assignment.dueAt) {
+        return undefined;
+    }
+    const date = new Date(assignment.dueAt);
+    if (Number.isNaN(date.getTime())) {
+        return undefined;
+    }
+    return toDateKey(date);
+}
+
+function buildRemainingLabel(dateKey: string) {
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dueDate = new Date(`${dateKey}T00:00:00`);
+    const diffDays = Math.floor((dueDate.getTime() - todayStart.getTime()) / DAY_IN_MS);
+
+    if (diffDays < 0) {
+        return { label: "期限超過", tone: "urgent" as const, emoji: "😱" };
+    }
+    if (diffDays === 0) {
+        return { label: "今日まで", tone: "urgent" as const, emoji: "😱" };
+    }
+    if (diffDays === 1) {
+        return { label: "あと1日", tone: "urgent" as const, emoji: "😱" };
+    }
+    return { label: `あと${diffDays}日`, tone: "default" as const, emoji: undefined };
+}
+
+function toDueTimeLabel(dueAt?: string) {
+    if (!dueAt) {
+        return undefined;
+    }
+    const date = new Date(dueAt);
+    if (Number.isNaN(date.getTime())) {
+        return undefined;
+    }
+    return `${pad2(date.getHours())}:${pad2(date.getMinutes())}まで`;
+}
+
+function sortAssignments(items: Assignment[]) {
+    return [...items].sort((a, b) => {
+        if (a.doneAt && !b.doneAt) return 1;
+        if (!a.doneAt && b.doneAt) return -1;
+        if (!a.dueAt || !b.dueAt) return 0;
+        return a.dueAt.localeCompare(b.dueAt);
+    });
+}
+
+export default function Index() {
+    const [assignmentData, setAssignmentData] = useState<z.infer<typeof V1AssignmentsSchema>>({ assignments: [] });
+    const [selectedDateId, setSelectedDateId] = useState<string | undefined>(undefined);
+    const [contentStartY, setContentStartY] = useState(0);
+    const groupYMapRef = useRef<Record<string, number>>({});
+    const mainScrollRef = useRef<ScrollView>(null);
+
+    const fetchAssignments = useCallback(async () => {
+        const cache = await assignmentRepository.getAssignments(true);
+        if (cache.assignments.length > 0) {
+            setAssignmentData(cache);
+        }
+
+        const latest = await assignmentRepository.getAssignments();
+        setAssignmentData(latest);
+    }, []);
+
+    useEffect(() => {
+        fetchAssignments().catch((error) => {
+            console.error("Failed to fetch assignments", error);
+        });
+    }, [fetchAssignments]);
+
+    const assignmentsByDate = useMemo(() => {
+        const grouped = new Map<string, Assignment[]>();
+        for (const assignment of assignmentData.assignments) {
+            const dueDateKey = toDueDateKey(assignment);
+            if (!dueDateKey) {
+                continue;
+            }
+            const current = grouped.get(dueDateKey) ?? [];
+            current.push(assignment);
+            grouped.set(dueDateKey, current);
+        }
+        return grouped;
+    }, [assignmentData.assignments]);
+
+    const dueDateKeys = useMemo(() => {
+        return Array.from(assignmentsByDate.keys()).sort((a, b) => a.localeCompare(b));
+    }, [assignmentsByDate]);
+
+    const undatedAssignments = useMemo(() => {
+        return sortAssignments(assignmentData.assignments.filter((assignment) => !toDueDateKey(assignment)));
+    }, [assignmentData.assignments]);
+
+    useEffect(() => {
+        if (dueDateKeys.length === 0) {
+            setSelectedDateId(undefined);
+            return;
+        }
+        if (!selectedDateId || !dueDateKeys.includes(selectedDateId)) {
+            setSelectedDateId(dueDateKeys[0]);
+        }
+    }, [dueDateKeys, selectedDateId]);
+
+    const dateStrip: { todayLabel: string; dates: AssignmentDateChip[] } = useMemo(() => {
+        const selectedLabel = selectedDateId ? formatDateFromKey(selectedDateId) : "期限日なし";
+        return {
+            todayLabel: selectedLabel,
+            dates: dueDateKeys.map((dateKey) => ({
+                id: dateKey,
+                day: toDayLabel(dateKey),
+                weekday: toWeekdayLabel(dateKey),
+                isSelected: dateKey === selectedDateId,
+            })),
+        };
+    }, [dueDateKeys, selectedDateId]);
+
+    const assignmentGroups = useMemo(() => {
+        const dueDateGroups = dueDateKeys.map((dateKey) => {
+            const remaining = buildRemainingLabel(dateKey);
+            const items = sortAssignments(assignmentsByDate.get(dateKey) ?? []);
+            return {
+                id: dateKey,
+                dueDate: formatDateFromKey(dateKey),
+                remainingLabel: remaining.label,
+                remainingTone: remaining.tone,
+                emoji: remaining.emoji,
+                defaultExpanded: true,
+                items,
+            };
+        });
+
+        if (undatedAssignments.length === 0) {
+            return dueDateGroups;
+        }
+
+        return [
+            {
+                id: "undated",
+                dueDate: "期限未設定",
+                remainingLabel: undefined,
+                remainingTone: "default" as const,
+                emoji: undefined,
+                defaultExpanded: true,
+                items: undatedAssignments,
+            },
+            ...dueDateGroups,
+        ];
+    }, [assignmentsByDate, dueDateKeys, undatedAssignments]);
+
+    const handleDatePress = useCallback(
+        (date: AssignmentDateChip) => {
+            setSelectedDateId(date.id);
+            const targetGroupY = groupYMapRef.current[date.id];
+            if (targetGroupY === undefined) {
+                return;
+            }
+            mainScrollRef.current?.scrollTo({ y: contentStartY + targetGroupY - 8, animated: true });
         },
-        {
-            id: "group-next",
-            dueDate: "2026/02/23",
-            remainingLabel: "あと2日",
-            remainingTone: "default" as const,
-            defaultExpanded: true,
-            items: [
-                {
-                    id: "item-4",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    dueTimeLabel: "16:00まで",
-                },
-                {
-                    id: "item-5",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    isCompleted: true,
-                    isHighlighted: true,
-                },
-                {
-                    id: "item-6",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    isCompleted: true,
-                    isHighlighted: true,
-                },
-                {
-                    id: "item-7",
-                    title: "レポート提出",
-                    subject: "コンピュータネットワーク",
-                    dueTimeLabel: "16:00まで",
-                },
-            ],
-        },
-        {
-            id: "group-later",
-            dueDate: "2026/02/23",
-            remainingLabel: "あと3日",
-            remainingTone: "default" as const,
-            defaultExpanded: false,
-            items: [],
-        },
-    ];
+        [contentStartY]
+    );
 
     return (
-        <MainTemplate title="課題" subtitle="現在抱えている課題表示ページです">
-            <View className="gap-4 px-4 pb-10">
-                <AssignmentDateStrip todayLabel={dateStrip.todayLabel} dates={dateStrip.dates} />
+        <MainTemplate
+            title="課題"
+            subtitle="現在抱えている課題表示ページです"
+            scrollViewRef={mainScrollRef}
+            refreshFunction={async () => {
+                await fetchAssignments();
+            }}
+        >
+            <View
+                className="gap-4 px-4 pb-10"
+                onLayout={(event) => {
+                    setContentStartY(event.nativeEvent.layout.y);
+                }}
+            >
+                <AssignmentDateStrip
+                    todayLabel={dateStrip.todayLabel}
+                    dates={dateStrip.dates}
+                    onDatePress={handleDatePress}
+                />
                 <Accordion className="gap-3">
                     {assignmentGroups.map((group) => (
-                        <AccordionItem
+                        <View
                             key={group.id}
-                            id={group.id}
-                            defaultExpanded={group.defaultExpanded}
-                            headerClassName="px-2"
-                            contentClassName="gap-1"
-                            header={
-                                <AssignmentGroupHeader
-                                    dueDate={group.dueDate}
-                                    remainingLabel={group.remainingLabel}
-                                    remainingTone={group.remainingTone}
-                                    emoji={group.emoji}
-                                />
-                            }
+                            onLayout={(event) => {
+                                groupYMapRef.current[group.id] = event.nativeEvent.layout.y;
+                            }}
                         >
-                            {group.items.map((item) => (
-                                <AssignmentItemRow key={item.id} item={item} />
-                            ))}
-                        </AccordionItem>
+                            <AccordionItem
+                                id={group.id}
+                                defaultExpanded={group.defaultExpanded}
+                                headerClassName="px-2"
+                                contentClassName="gap-1"
+                                header={
+                                    <AssignmentGroupHeader
+                                        dueDate={group.dueDate}
+                                        remainingLabel={group.remainingLabel}
+                                        remainingTone={group.remainingTone}
+                                        emoji={group.emoji}
+                                    />
+                                }
+                            >
+                                {group.items.map((item) => (
+                                    <AssignmentItemRow
+                                        key={item.id}
+                                        assignment={item}
+                                        isHighlighted={group.remainingTone === "urgent"}
+                                    />
+                                ))}
+                                {group.items.length === 0 ? (
+                                    <View className="items-center justify-center rounded-2xl border-2 border-[#f9f7f6] bg-white py-3">
+                                        <Text className="text-[0.875rem] font-medium text-[#b8b6b4]">
+                                            この日の課題はありません
+                                        </Text>
+                                    </View>
+                                ) : null}
+                            </AccordionItem>
+                        </View>
                     ))}
                 </Accordion>
+                {assignmentGroups.length === 0 ? (
+                    <View className="items-center justify-center rounded-2xl border-2 border-[#f9f7f6] bg-white py-4">
+                        <Text className="text-[0.875rem] font-medium text-[#b8b6b4]">期限付き課題はありません</Text>
+                    </View>
+                ) : null}
             </View>
         </MainTemplate>
     );
@@ -227,23 +360,17 @@ export function AssignmentGroupHeader({
     );
 }
 
-export type AssignmentItemData = {
-    id: string;
-    title: string;
-    subject: string;
-    dueTimeLabel?: string;
-    isCompleted?: boolean;
+type AssignmentItemRowProps = {
+    assignment: Assignment;
     isHighlighted?: boolean;
 };
 
-type AssignmentItemRowProps = {
-    item: AssignmentItemData;
-};
-
-export function AssignmentItemRow({ item }: AssignmentItemRowProps) {
-    const isHighlighted = item.isHighlighted;
+export function AssignmentItemRow({ assignment, isHighlighted }: AssignmentItemRowProps) {
     const textColor = isHighlighted ? "text-[#2e6bff]" : "text-[#1b1a19]";
     const subjectColor = isHighlighted ? "text-[#2e6bff]" : "text-[#b8b6b4]";
+    const title = assignment.appData?.title || assignment.classDetail?.name || "課題";
+    const subject = assignment.appData?.directoryName || assignment.manaboId;
+    const dueTimeLabel = toDueTimeLabel(assignment.dueAt);
 
     return (
         <View
@@ -253,15 +380,15 @@ export function AssignmentItemRow({ item }: AssignmentItemRowProps) {
         >
             <View
                 className={`h-4 w-4 items-center justify-center rounded-full border-2 ${
-                    item.isCompleted ? "border-[#2e6bff] bg-[#2e6bff]" : "border-[#e5e5e5] bg-white"
+                    assignment.doneAt ? "border-[#2e6bff] bg-[#2e6bff]" : "border-[#e5e5e5] bg-white"
                 }`}
             ></View>
             <View className="flex-1">
-                <Text className={`text-[1rem] font-semibold ${textColor}`}>{item.title}</Text>
-                <Text className={`text-[0.75rem] font-semibold ${subjectColor}`}>{item.subject}</Text>
+                <Text className={`text-[1rem] font-semibold ${textColor}`}>{title}</Text>
+                <Text className={`text-[0.75rem] font-semibold ${subjectColor}`}>{subject}</Text>
             </View>
-            {item.dueTimeLabel ? (
-                <Text className="text-[0.6875rem] font-semibold text-[#e90000]">{item.dueTimeLabel}</Text>
+            {dueTimeLabel ? (
+                <Text className="text-[0.6875rem] font-semibold text-[#e90000]">{dueTimeLabel}</Text>
             ) : null}
         </View>
     );

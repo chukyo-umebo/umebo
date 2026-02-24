@@ -54,12 +54,18 @@ export const V1AssignmentClassDetailSchema = z
     .optional()
     .nullable();
 
+export const V1AssignmentAppDataSchema = z.object({
+    directoryName: z.string(),
+    title: z.string(),
+    description: z.string().optional(),
+});
+
 export const V1BaseAssignmentSchema = z.object({
     manaboId: z.string(),
     dueAt: z.string().optional(),
     doneAt: z.string().optional(),
     classDetail: V1AssignmentClassDetailSchema,
-    appData: z.any(),
+    appData: V1AssignmentAppDataSchema.optional(),
 });
 
 export const V1PostAssignmentsSchema = z.object({
@@ -69,7 +75,7 @@ export const V1PostAssignmentsSchema = z.object({
 export const V1PatchAssignmentSchema = z.object({
     dueAt: z.string().optional(),
     doneAt: z.string().optional(),
-    appData: z.any(),
+    appData: V1AssignmentAppDataSchema.optional(),
 });
 
 export const V1AssignmentsSchema = z.object({
