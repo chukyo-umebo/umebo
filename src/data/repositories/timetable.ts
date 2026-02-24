@@ -1,3 +1,4 @@
+import { AlboTimetableItemDTO, CubicsAsTimetableSlotDTO } from "@chukyo-umebo/web_parser";
 import { z } from "zod";
 
 import { ShouldReSignInError } from "@/common/errors/auth";
@@ -108,49 +109,43 @@ class TimetableRepository {
 
         for (const period of manaboTimetable.periods) {
             const periodNum = period.period;
-            for (const slot of period.slots) {
-                if (slot.className) {
-                    const dayStr = slot.day;
+            for (const manabo of period.slots) {
+                if (manabo.className) {
+                    const dayStr = manabo.day;
                     const dayEnStr = dayOfWeekEnMap[dayStr] || "unknown";
                     const timetableStr = `${dayEnStr}-${periodNum}`;
 
                     // manaboId の抽出
-                    const manaboIdMatch = slot.href?.match(/class\/(\d+)/);
-                    const manaboId = manaboIdMatch ? manaboIdMatch[1] || slot.href : slot.href;
+                    const manaboIdMatch = manabo.href?.match(/class\/(\d+)/);
+                    const manaboId = manaboIdMatch ? manaboIdMatch[1] || manabo.href : manabo.href;
 
-                    // cubicsId の取得
-                    let cubicsId: string | undefined = undefined;
+                    // cubics の取得
+                    let cubics: CubicsAsTimetableSlotDTO | undefined = undefined;
                     if (cubicsTimetable) {
                         const cubicsDayIndex = cubicsTimetable.days.findIndex((d) => d.label === dayStr);
                         if (cubicsDayIndex !== -1) {
                             const cubicsPeriod = cubicsTimetable.periods.find((p) => p.periodLabel === periodNum);
                             if (cubicsPeriod && cubicsPeriod.slots[cubicsDayIndex]) {
-                                const cubicsSlot = cubicsPeriod.slots[cubicsDayIndex];
-                                if (cubicsSlot.subject) {
-                                    cubicsId = cubicsSlot.lessonCode || undefined;
-                                }
+                                cubics = cubicsPeriod.slots[cubicsDayIndex];
                             }
                         }
                     }
 
-                    // alboId の取得
-                    let alboId: string | undefined = undefined;
+                    // albo の取得
+                    let albo: AlboTimetableItemDTO | undefined = undefined;
                     if (alboTimetable) {
                         const dayOfWeek = dayOfWeekMap[dayStr];
                         if (dayOfWeek !== undefined) {
-                            const alboItem = alboTimetable.result.items.find(
+                            albo = alboTimetable.result.items.find(
                                 (item) => item.day_of_week === dayOfWeek && item.time_number.toString() === periodNum
                             );
-                            if (alboItem) {
-                                alboId = alboItem.class_id;
-                            }
                         }
                     }
 
                     // 既存のクラスがあるかチェック（同じ授業が複数時限にある場合）
                     const existingClass = manaboId
                         ? newTimetable.classes.find((c) => c.manaboId === manaboId)
-                        : newTimetable.classes.find((c) => c.name === slot.className);
+                        : newTimetable.classes.find((c) => c.name === manabo.className);
 
                     if (existingClass) {
                         if (!existingClass.timetable.includes(timetableStr)) {
@@ -158,11 +153,21 @@ class TimetableRepository {
                         }
                     } else {
                         newTimetable.classes.push({
-                            name: slot.className,
+                            name: manabo.className,
                             manaboId: manaboId || "",
-                            alboId: alboId ?? undefined,
-                            cubicsId: cubicsId ?? undefined,
+                            alboId: albo?.class_id,
+                            cubicsId: cubics?.lessonCode ?? undefined,
                             timetable: [timetableStr],
+                            appData: {
+                                color: "#CCCCCC", // デフォルトの色
+                                teacher: albo?.teacher,
+                                room: albo?.room ?? cubics?.classroom ?? undefined,
+                                campus: albo?.campus,
+                                material: [],
+                                alboId: albo?.id,
+                                alboUUID: albo?.uuid,
+                                cubicsDetailUrl: cubics?.detailUrl ?? undefined,
+                            },
                         });
                     }
                 }

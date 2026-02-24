@@ -7,6 +7,21 @@ export const V1MessageSchema = z.object({
 
 /* ----- 時間割関連 ----- */
 
+export const V1TimetableAppDataSchema = z.object({
+    color: z.string(),
+    teacher: z.string().optional(),
+    room: z.string().optional(),
+    campus: z.string().optional(),
+    material: z.array(
+        z.object({
+            name: z.string(),
+        })
+    ),
+    alboId: z.string().optional(),
+    alboUUID: z.string().optional(),
+    cubicsDetailUrl: z.string().optional(),
+});
+
 export const V1TimetableSchema = z.object({
     term: z.string(),
     classes: z.array(
@@ -16,7 +31,7 @@ export const V1TimetableSchema = z.object({
             alboId: z.string().optional(),
             cubicsId: z.string().optional(),
             timetable: z.array(z.string()),
-            appData: z.any().optional(),
+            appData: V1TimetableAppDataSchema,
         })
     ),
 });
@@ -24,7 +39,7 @@ export const V1TimetableSchema = z.object({
 export const V1PatchTimetableSchema = z.object({
     term: z.string(),
     manaboId: z.string(),
-    appData: z.any(),
+    appData: V1TimetableAppDataSchema.optional(),
 });
 
 /* ----- 出席関連 ----- */
@@ -65,7 +80,7 @@ export const V1BaseAssignmentSchema = z.object({
     dueAt: z.string().optional(),
     doneAt: z.string().optional(),
     classDetail: V1AssignmentClassDetailSchema,
-    appData: V1AssignmentAppDataSchema.optional(),
+    appData: V1AssignmentAppDataSchema,
 });
 
 export const V1PostAssignmentsSchema = z.object({
