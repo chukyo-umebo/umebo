@@ -3,12 +3,16 @@ import { View } from "react-native";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { z } from "zod";
 
+
+
 import { V1TimetableSchema } from "@/common/types/umebo-api-schema";
 import { timetableRepository } from "@/data/repositories/timetable";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { MainTemplate } from "@/presentation/components/template/main";
 import { Text } from "@/presentation/components/ui/text";
 import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
+import { resolveThemeColor } from "@/presentation/components/ui/gluestack-ui-provider/theme-colors";
+
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri"];
 const DAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI"];
@@ -20,24 +24,6 @@ const PERIOD_TIMES = [
     { start: "15:20", end: "16:50" },
     { start: "17:00", end: "18:30" },
 ];
-
-const COLORS = [
-    "#f36e88", // Pink
-    "#ad5ddc", // Purple
-    "#ff852e", // Orange
-    "#77d03b", // Green
-    "#2e6bff", // Blue
-    "#ff6ab0", // Pink2
-];
-
-function getClassColor(name: string) {
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash) % COLORS.length;
-    return COLORS[index];
-}
 
 type TimetableData = z.infer<typeof V1TimetableSchema>;
 
@@ -127,9 +113,7 @@ export default function TimetableScreen() {
                             {/* Days Columns */}
                             {DAYS.map((day) => {
                                 const classInfo = getClassForSlot(day, period);
-                                const color = classInfo
-                                    ? getClassColor(classInfo.name) || "transparent"
-                                    : "transparent";
+                                const color = resolveThemeColor(classInfo?.appData?.color, "light");
 
                                 return (
                                     <ClassCard

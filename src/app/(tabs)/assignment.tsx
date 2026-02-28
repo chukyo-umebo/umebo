@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { z } from "zod";
 
 import { V1AssignmentsSchema } from "@/common/types/umebo-api-schema";
@@ -7,6 +8,7 @@ import { assignmentRepository } from "@/data/repositories/assignment";
 import { MainTemplate } from "@/presentation/components/template/main";
 import { Accordion, AccordionItem } from "@/presentation/components/ui/accordion";
 import { Text } from "@/presentation/components/ui/text";
+import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
 
 const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -84,21 +86,42 @@ function sortAssignments(items: Assignment[]) {
 }
 
 export default function Index() {
+    const { chukyoShibbolethAuth } = useChukyoShibboleth();
     const [assignmentData, setAssignmentData] = useState<z.infer<typeof V1AssignmentsSchema>>({ assignments: [] });
     const [selectedDateId, setSelectedDateId] = useState<string | undefined>(undefined);
     const [contentStartY, setContentStartY] = useState(0);
     const groupYMapRef = useRef<Record<string, number>>({});
     const mainScrollRef = useRef<ScrollView>(null);
 
-    const fetchAssignments = useCallback(async () => {
-        const cache = await assignmentRepository.getAssignments(true);
-        if (cache.assignments.length > 0) {
-            setAssignmentData(cache);
+    const onRefresh = useCallback(async () => {
+        try {
+            await toast.promise(assignmentRepository.updateAssignments(chukyoShibbolethAuth), {
+                loading: "課題を更新中...",
+                success: "課題が更新されました",
+                error: "課題の更新に失敗しました",
+            });
+        } catch (error) {
+            console.error("Failed to refresh assignments", error);
         }
+    }, [chukyoShibbolethAuth]);
 
-        const latest = await assignmentRepository.getAssignments();
-        setAssignmentData(latest);
-    }, []);
+    const fetchAssignments = useCallback(async () => {
+        try {
+            const cache = await assignmentRepository.getAssignments(true);
+            if (cache.assignments.length > 0) {
+                setAssignmentData(cache);
+            }
+
+            let latest = await assignmentRepository.getAssignments();
+            if (latest.assignments.length === 0) {
+                await onRefresh();
+                latest = await assignmentRepository.getAssignments();
+            }
+            setAssignmentData(latest);
+        } catch (error) {
+            console.error("Failed to fetch assignments", error);
+        }
+    }, [onRefresh]);
 
     useEffect(() => {
         fetchAssignments().catch((error) => {
@@ -202,6 +225,7 @@ export default function Index() {
             subtitle="現在抱えている課題表示ページです"
             scrollViewRef={mainScrollRef}
             refreshFunction={async () => {
+                await onRefresh();
                 await fetchAssignments();
             }}
         >

@@ -1,5 +1,6 @@
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 
+import { resolveThemeColor } from "../../ui/gluestack-ui-provider/theme-colors";
 import { Text } from "../../ui/text";
 
 type IClassCardProps = Omit<
@@ -13,10 +14,14 @@ type IClassCardProps = Omit<
     "children"
 >;
 export function ClassCard({ subject, ...props }: IClassCardProps) {
+    const colorMode = useColorScheme();
+    const mode = colorMode === "dark" ? "dark" : "light";
+    const resolvedColor = subject ? resolveThemeColor(subject.color, mode) : undefined;
+
     return (
         <View {...props}>
             {subject ? (
-                <View className="flex-1 justify-between rounded-[10px] p-1" style={{ backgroundColor: subject.color }}>
+                <View className="flex-1 justify-between rounded-[10px] p-1" style={{ backgroundColor: resolvedColor }}>
                     <View className="flex-1 items-center justify-center">
                         <Text className="text-center text-[0.9rem] font-semibold leading-[1rem] text-white">
                             {subject.subject}
@@ -27,7 +32,7 @@ export function ClassCard({ subject, ...props }: IClassCardProps) {
                             className="text-center text-[0.7rem] font-medium"
                             numberOfLines={1}
                             ellipsizeMode="tail"
-                            style={{ color: subject.color }}
+                            style={{ color: resolvedColor }}
                         >
                             {subject.room}
                         </Text>
