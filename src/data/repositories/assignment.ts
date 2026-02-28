@@ -45,6 +45,11 @@ class AssignmentRepository {
         this.timetableRepository = _timetableRepository;
     }
 
+    /**
+     * 課題一覧を取得する（キャッシュフォールバック付き）
+     * @param cacheOnly - trueの場合キャッシュのみ参照する
+     * @returns 課題データ一覧
+     */
     public async getAssignments(cacheOnly = false): Promise<z.infer<typeof V1AssignmentsSchema>> {
         const firebaseIdToken = await this.firebaseProvider.getFirebaseIdToken();
         if (cacheOnly) {
@@ -69,6 +74,11 @@ class AssignmentRepository {
         }
     }
 
+    /**
+     * MaNaBoから最新の課題を取得し、未登録の課題をUMEBO APIに登録する
+     * @param shibAuth - Shibboleth認証関数
+     * @throws {ShouldReSignInError} 認証情報が未設定の場合
+     */
     public async updateAssignments(shibAuth: shibbolethWebViewAuthFunction) {
         const firebaseIdToken = await this.firebaseProvider.getFirebaseIdToken();
         const studentId = await this.authRepository.getStudentId();

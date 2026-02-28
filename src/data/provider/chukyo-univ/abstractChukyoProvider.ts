@@ -18,10 +18,15 @@ export abstract class AbstractChukyoProvider {
         cookies: {},
         lastRefreshedAt: new Date(0),
     };
+    /**
+     * 認証クッキーを更新し、最終更新時刻を記録する
+     * @param cookies - 保存するクッキー
+     */
     private setAuthCookie(cookies: Cookies) {
         this.authCookie.cookies = cookies;
         this.authCookie.lastRefreshedAt = new Date();
     }
+    /** 認証クッキーをクリアして初期状態に戻す */
     public clearAuthCookie() {
         this.authCookie = {
             cookies: {},

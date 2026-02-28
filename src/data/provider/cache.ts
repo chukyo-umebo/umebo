@@ -26,6 +26,11 @@ export class CacheProvider {
         this.namespace = namespace;
     }
 
+    /**
+     * キャッシュからデータを取得する
+     * @param key - キャッシュキー
+     * @returns キャッシュエントリ、存在しないか無効な場合はnull
+     */
     public async get<T>(key: CacheKey): Promise<CacheEntry<T> | null> {
         const raw = await AsyncStorage.getItem(this.makeKey(key));
         if (!raw) return null;
@@ -43,6 +48,11 @@ export class CacheProvider {
         }
     }
 
+    /**
+     * データをキャッシュに保存する
+     * @param key - キャッシュキー
+     * @param value - 保存するデータ
+     */
     public async set<T>(key: CacheKey, value: T): Promise<void> {
         const payload: CacheEntry<T> = {
             storedAt: Date.now(),
@@ -51,10 +61,19 @@ export class CacheProvider {
         await AsyncStorage.setItem(this.makeKey(key), JSON.stringify(payload));
     }
 
+    /**
+     * キャッシュからデータを削除する
+     * @param key - 削除対象のキャッシュキー
+     */
     public async remove(key: CacheKey): Promise<void> {
         await AsyncStorage.removeItem(this.makeKey(key));
     }
 
+    /**
+     * ネームスペース付きのキャッシュキーを生成する
+     * @param key - 元のキー名
+     * @returns ネームスペースをプレフィックスとしたキー文字列
+     */
     private makeKey(key: string): string {
         return `${this.namespace}.${key}`;
     }

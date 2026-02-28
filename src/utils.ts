@@ -2,6 +2,10 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 
+/**
+ * 現在の日時から学期文字列を生成する
+ * @returns 春学期は`{年}S`、秋学期は`{年}F`の形式の学期文字列
+ */
 export function buildTermString(): string {
     dayjs.extend(utc);
     dayjs.extend(timezone);

@@ -29,6 +29,11 @@ const TIMETABLE_THEME_COLORS: Record<ModeType, Record<ColorNameType, string>> = 
 
 const HEX_COLOR_PATTERN = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 
+/**
+ * 3桁の短縮形HEXカラーコードを6桁の正規形に変換する
+ * @param color - HEXカラーコード（例: "#abc"）
+ * @returns 正規化された6桁のHEXカラーコード（例: "#aabbcc"）
+ */
 function normalizeHexColor(color: string): string {
     const normalized = color.toLowerCase();
     if (normalized.length === 4) {
@@ -37,6 +42,12 @@ function normalizeHexColor(color: string): string {
     return normalized;
 }
 
+/**
+ * テーマカラー名またはHEXカラーコードを解決し、現在のモードに応じた色を返す
+ * @param colorName - テーマカラー名またはHEXカラーコード
+ * @param mode - テーマモード（light/dark）
+ * @returns 解決されたHEXカラーコード
+ */
 export function resolveThemeColor(colorName: string | null | undefined, mode: ModeType): string {
     const normalized = colorName?.trim().toLowerCase() || "";
     const fallback = TIMETABLE_THEME_COLORS[mode].grey;

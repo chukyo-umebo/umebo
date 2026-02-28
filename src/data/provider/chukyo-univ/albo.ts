@@ -46,6 +46,13 @@ class AlboProvider extends AbstractChukyoProvider {
         return await response.text();
     }
 
+    /**
+     * Alboから学年暦カレンダーデータを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みのカレンダーデータ
+     */
     public async getCalendar(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseAlboCalendar(
             await this.fetch(
@@ -60,6 +67,13 @@ class AlboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * Alboからユーザーの個人情報を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みの個人情報データ
+     */
     public async getPersonal(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseAlboPersonal(
             await this.fetch(
@@ -74,6 +88,13 @@ class AlboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * Alboからお知らせ一覧を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みのお知らせデータ
+     */
     public async getInformation(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseAlboInformation(
             await this.fetch(
@@ -89,6 +110,13 @@ class AlboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * Alboから時間割データを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みの時間割データ
+     */
     public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseAlboTimetable(
             await this.fetch(

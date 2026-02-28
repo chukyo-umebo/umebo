@@ -1,5 +1,11 @@
 import { Platform } from "react-native";
 
+/**
+ * 開発環境と本番環境でURLを切り替えるヘルパー関数
+ * @param devValue - 開発環境で使用する値（undefinedの場合は本番値を使用）
+ * @param prodValue - 本番環境で使用する値
+ * @returns 環境に応じたURL文字列
+ */
 function devHelper(devValue: string | undefined, prodValue: string): string {
     if (__DEV__) {
         if (typeof devValue === "undefined") {
@@ -54,6 +60,7 @@ export const STORE_URLS = {
     /** Google Play Store */
     android: "https://play.google.com/store/apps/details?id=app.chukyopasspal.passpal",
 
+    /** デバイスのOSに応じたストアURLを返す */
     device: () => (Platform.OS === "ios" ? STORE_URLS.ios : STORE_URLS.android),
 } as const;
 

@@ -12,6 +12,10 @@ import { ShouldReSignInError } from "@/common/errors/auth";
 class FirebaseProvider {
     private firebaseIdToken: string | null = null;
 
+    /**
+     * Firebase IDトークンを取得する（キャッシュ済みで有効期限内ならキャッシュを使用）
+     * @returns Firebase IDトークン文字列
+     */
     public async getFirebaseIdToken(): Promise<string> {
         if (!this.firebaseIdToken) {
             this.firebaseIdToken = await this.fetchFirebaseIdToken();
@@ -27,6 +31,11 @@ class FirebaseProvider {
         return this.firebaseIdToken;
     }
 
+    /**
+     * Google Sign-In経由でFirebase IDトークンを新規取得する
+     * @returns 新しいFirebase IDトークン文字列
+     * @throws {ShouldReSignInError} トークン取得に失敗した場合
+     */
     private async fetchFirebaseIdToken(): Promise<string> {
         try {
             // 1. Google Sign-Inからトークンを取得

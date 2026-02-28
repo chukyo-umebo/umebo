@@ -86,6 +86,14 @@ class ClassDataRepository {
         this.authRepository = _authRepository;
     }
 
+    /**
+     * MaNaBoから授業のディレクトリ一覧を取得する（クラストップを先頭に追加）
+     * @param manaboClassId - MaNaBo授業ID
+     * @param authFunc - Shibboleth認証関数
+     * @returns ディレクトリIDとタイトルの配列
+     * @throws {ShouldReSignInError} 認証情報が未設定の場合
+     * @throws {ParseError} データのパースに失敗した場合
+     */
     private async getDirectory(
         manaboClassId: string,
         authFunc: shibbolethWebViewAuthFunction
@@ -110,6 +118,13 @@ class ClassDataRepository {
         }
     }
 
+    /**
+     * 授業の全ディレクトリからコンテンツを取得する
+     * @param manaboClassId - MaNaBo授業ID
+     * @param authFunc - Shibboleth認証関数
+     * @returns ディレクトリごとのコンテンツ一覧
+     * @throws {ShouldReSignInError} 認証情報が未設定の場合
+     */
     public async getContents(manaboClassId: string, authFunc: shibbolethWebViewAuthFunction): Promise<ClassContent[]> {
         const studentId = await this.authRepository.getStudentId();
         const password = await this.authRepository.getPassword();
@@ -193,6 +208,11 @@ class ClassDataRepository {
         return { start: startDate, end: endDate };
     }
 
+    /**
+     * MaNaBoのコンテンツDTOをドメインモデルに変換する
+     * @param data - MaNaBoのコンテンツDTO配列
+     * @returns ドメインモデルに変換されたコンテンツ配列
+     */
     private manaboContentToDomain(data: ManaboClassContentDTO["contents"]): ManaboContentData[] {
         return data.map((content) => {
             // 期限の計算

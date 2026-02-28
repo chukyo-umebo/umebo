@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePathname } from "expo-router";
 
+/**
+ * リスト画面の上部パディングを計算するカスタムフック
+ * @returns SafeAreaの上部パディング値
+ */
 export function useListTopPadding() {
     const insets = useSafeAreaInsets();
 

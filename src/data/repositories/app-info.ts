@@ -6,18 +6,22 @@ import { remoteConfigProvider } from "../provider/remote-config";
 
 class AppInfoRepository {
     private readonly remoteConfigProvider: typeof remoteConfigProvider;
+    /** @param _remoteConfigProvider - リモート設定プロバイダーのインスタンス */
     constructor(_remoteConfigProvider = remoteConfigProvider) {
         this.remoteConfigProvider = _remoteConfigProvider;
     }
 
+    /** アプリの現在のバージョンを取得する */
     get currentVersion(): string {
         return Application.nativeApplicationVersion ?? "0.0.0";
     }
 
+    /** Remote Configから最低必要バージョンを取得する */
     get minimumVersion(): string {
         return getValue(getRemoteConfig(), "minimumVersion").asString();
     }
 
+    /** 表示用のバージョン情報文字列を生成する */
     get versionInfo(): string {
         const updateCreatedAt = Updates.createdAt ?? new Date(0);
         const formatter = new Intl.DateTimeFormat("ja-JP", {
@@ -33,18 +37,33 @@ class AppInfoRepository {
         return `Version ${this.currentVersion} (${date})`;
     }
 
+    /**
+     * アプリのアップデートが必要かどうかを判定する
+     * @returns 現在のバージョンが最低バージョン未満ならtrue
+     */
     public isNeededUpdate(): boolean {
         return this.compareVersions(this.currentVersion, this.minimumVersion) < 0;
     }
 
+    /**
+     * アプリがメンテナンスモードかどうかを判定する
+     * @returns メンテナンス中ならtrue
+     */
     public isUnderMaintenance(): boolean {
         return getValue(getRemoteConfig(), "maintenanceMode").asBoolean();
     }
 
+    /** Firebase Remote Configの設定を取得して反映する */
     public async fetchFirebaseRemoteConfig(): Promise<void> {
         return this.remoteConfigProvider.fetchAndActivate();
     }
 
+    /**
+     * セマンティックバージョニングで2つのバージョンを比較する
+     * @param version1 - 比較元のバージョン文字列
+     * @param version2 - 比較先のバージョン文字列
+     * @returns version1が小さければ-1、等しければ0、大きければ1
+     */
     private compareVersions(version1: string, version2: string): number {
         const v1Parts = version1.split(".").map((part) => parseInt(part, 10));
         const v2Parts = version2.split(".").map((part) => parseInt(part, 10));

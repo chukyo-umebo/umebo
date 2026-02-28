@@ -4,6 +4,11 @@ import { toast } from "@backpackapp-io/react-native-toast";
 import { AuthService } from "@/domain/services/auth";
 import { ShouldReSignInError } from "./common/errors/auth";
 
+/**
+ * グローバルなJavaScript例外を処理する
+ * @param error - 発生したエラーオブジェクト
+ * @param isFatal - 致命的なエラーかどうか
+ */
 export function handleError(error: Error, isFatal: boolean) {
     console.log("JS Exception:", error, isFatal);
     if (error.cause instanceof Error) console.log("Caused by:", error.cause);

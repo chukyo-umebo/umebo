@@ -89,6 +89,13 @@ class CubicsProvider extends AbstractChukyoProvider {
         return true;
     }
 
+    /**
+     * CUBICSから時間割データを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みの時間割データ
+     */
     public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseCubicsAsTimetable(
             await this.fetch(

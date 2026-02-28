@@ -16,6 +16,12 @@ import {
 import { httpClient, HttpClientOptions } from "../clients/httpClient";
 
 class UMEBOAPIProvider {
+    /**
+     * UMEBO APIへの共通リクエスト処理
+     * @param path - APIのパス
+     * @param options - HTTPリクエストオプション（firebaseIdTokenを含む）
+     * @returns レスポンスのJSONデータ
+     */
     private async fetch(path: string, options: HttpClientOptions & { firebaseIdToken?: string }): Promise<unknown> {
         const { firebaseIdToken, headers, ...httpOptions } = options || {};
         const response = await httpClient(`${UMEBO_API_URLS.base}${path}`, {
@@ -30,6 +36,11 @@ class UMEBOAPIProvider {
         return await response.json();
     }
 
+    /**
+     * UMEBO APIにログインする
+     * @param firebaseIdToken - Firebase IDトークン
+     * @returns ログイン結果メッセージ
+     */
     public async login(firebaseIdToken: string): Promise<z.infer<typeof V1MessageSchema>> {
         return V1MessageSchema.parse(
             await this.fetch("/v1/auth/login", {
@@ -39,6 +50,11 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 時間割データを取得する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @returns 時間割データ
+     */
     public async getTimetable(firebaseIdToken: string): Promise<z.infer<typeof V1TimetableSchema>> {
         return V1TimetableSchema.parse(
             await this.fetch("/v1/timetable", {
@@ -48,6 +64,12 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 時間割データを部分更新する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param timetableData - 更新する時間割データ
+     * @returns 更新結果メッセージ
+     */
     public async patchTimetable(
         firebaseIdToken: string,
         timetableData: z.infer<typeof V1PatchTimetableSchema>
@@ -61,6 +83,12 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 時間割データを新規登録する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param timetableData - 登録する時間割データ
+     * @returns 登録結果メッセージ
+     */
     public async postTimetable(
         firebaseIdToken: string,
         timetableData: z.infer<typeof V1TimetableSchema>
@@ -74,6 +102,7 @@ class UMEBOAPIProvider {
         );
     }
 
+    /** スクールバスの時刻表データを取得する */
     public async getSchoolBusTimetable(): Promise<z.infer<typeof SchoolBusTimetableSchema>> {
         return SchoolBusTimetableSchema.parse(
             await this.fetch("/v1/document/school-bus-timetable", {
@@ -82,6 +111,7 @@ class UMEBOAPIProvider {
         );
     }
 
+    /** スクールバスのカレンダーデータを取得する */
     public async getSchoolBusCalendar(): Promise<z.infer<typeof SchoolBusCalendarSchema>> {
         return SchoolBusCalendarSchema.parse(
             await this.fetch("/v1/document/school-bus-calendar", {
@@ -90,6 +120,12 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 出席データを取得する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param manaboId - MaNaBo授業ID
+     * @returns 出席データ一覧
+     */
     public async getAttendance(
         firebaseIdToken: string,
         manaboId: string
@@ -102,6 +138,13 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 出席データを登録する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param manaboId - MaNaBo授業ID
+     * @param attendanceData - 登録する出席データ
+     * @returns 登録結果メッセージ
+     */
     public async postAttendance(
         firebaseIdToken: string,
         manaboId: string,
@@ -116,6 +159,14 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 出席データを更新する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param manaboId - MaNaBo授業ID
+     * @param attendanceId - 出席ID
+     * @param attendanceData - 更新する出席データ
+     * @returns 更新結果メッセージ
+     */
     public async patchAttendance(
         firebaseIdToken: string,
         manaboId: string,
@@ -131,6 +182,13 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 出席データを削除する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param manaboId - MaNaBo授業ID
+     * @param attendanceId - 削除対象の出席ID
+     * @returns 削除結果メッセージ
+     */
     public async deleteAttendance(
         firebaseIdToken: string,
         manaboId: string,
@@ -144,6 +202,11 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 課題データ一覧を取得する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @returns 課題データ一覧
+     */
     public async getAssignments(firebaseIdToken: string): Promise<z.infer<typeof V1AssignmentsSchema>> {
         return V1AssignmentsSchema.parse(
             await this.fetch(`/v1/assignment`, {
@@ -153,6 +216,12 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 課題データを登録する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param assignmentData - 登録する課題データ
+     * @returns 登録結果メッセージ
+     */
     public async postAssignment(
         firebaseIdToken: string,
         assignmentData: z.infer<typeof V1PostAssignmentsSchema>
@@ -166,6 +235,13 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 課題データを更新する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param assignmentId - 課題ID
+     * @param assignmentData - 更新する課題データ
+     * @returns 更新結果メッセージ
+     */
     public async patchAssignment(
         firebaseIdToken: string,
         assignmentId: string,
@@ -180,6 +256,12 @@ class UMEBOAPIProvider {
         );
     }
 
+    /**
+     * 課題データを削除する
+     * @param firebaseIdToken - Firebase IDトークン
+     * @param assignmentId - 削除対象の課題ID
+     * @returns 削除結果メッセージ
+     */
     public async deleteAssignment(
         firebaseIdToken: string,
         assignmentId: string

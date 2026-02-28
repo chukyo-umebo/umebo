@@ -59,6 +59,13 @@ class ManaboProvider extends AbstractChukyoProvider {
         return await response.text();
     }
 
+    /**
+     * MaNaBoから時間割データを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みの時間割データ
+     */
     public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseManaboTimetable(
             await this.fetch(
@@ -79,6 +86,13 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoからお知らせ一覧を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みのお知らせデータ
+     */
     public async getNews(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseManaboNews(
             await this.fetch(
@@ -99,6 +113,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoから受信メール一覧を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param page - ページ番号（デフォルト: 1）
+     * @returns パース済みの受信メール一覧
+     */
     public async getReceivedMailList(
         userId: string,
         password: string,
@@ -125,6 +147,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoから送信メール一覧を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param page - ページ番号（デフォルト: 1）
+     * @returns パース済みの送信メール一覧
+     */
     public async getSentMailList(
         userId: string,
         password: string,
@@ -151,6 +181,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoからメールの詳細を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param mailId - メールID
+     * @returns パース済みのメール詳細データ
+     */
     public async getMailDetail(
         userId: string,
         password: string,
@@ -170,6 +208,13 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoのメール送信フォーム情報を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @returns パース済みのメール送信フォームデータ
+     */
     public async getMailSendForm(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
         return parseManaboMailSend(
             await this.fetch(
@@ -190,6 +235,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoからメール送信先メンバーを検索する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param query - 検索クエリ
+     * @returns パース済みのメンバー一覧
+     */
     public async getMailMember(
         userId: string,
         password: string,
@@ -216,6 +269,15 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoから授業のお知らせを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @param directoryId - ディレクトリID（デフォルト: "0"）
+     * @returns パース済みの授業お知らせデータ
+     */
     public async getClassNews(
         userId: string,
         password: string,
@@ -244,6 +306,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoから授業のシラバスを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @returns パース済みのシラバスデータ
+     */
     public async getClassSyllabus(
         userId: string,
         password: string,
@@ -270,6 +340,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoから授業の出席情報を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @returns パース済みの出席情報データ
+     */
     public async getClassEntry(
         userId: string,
         password: string,
@@ -296,6 +374,15 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoから授業のディレクトリ一覧を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @param directoryId - 親ディレクトリID（デフォルト: "0"）
+     * @returns パース済みのディレクトリ一覧
+     */
     public async getClassDirectory(
         userId: string,
         password: string,
@@ -323,6 +410,16 @@ class ManaboProvider extends AbstractChukyoProvider {
         return parseManaboClassDirectory(fetched);
     }
 
+    /**
+     * MaNaBoから授業のコンテンツ一覧を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @param directoryId - ディレクトリID
+     * @param viewType - 表示タイプ（省略可）
+     * @returns パース済みのコンテンツ一覧
+     */
     public async getClassContent(
         userId: string,
         password: string,
@@ -353,6 +450,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoで出席登録が存在するか確認する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @returns 出席登録の確認結果
+     */
     public async getEntryExist(
         userId: string,
         password: string,
@@ -380,6 +485,14 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoの出席登録フォームを取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @returns パース済みの出席登録フォームデータ
+     */
     public async getEntryForm(
         userId: string,
         password: string,
@@ -399,6 +512,17 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoで出席を登録する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param classId - 授業ID
+     * @param directoryId - ディレクトリID
+     * @param entryId - 出席登録ID
+     * @param uniqueId - ユニークID
+     * @returns 出席登録の結果
+     */
     public async submitEntry(
         userId: string,
         password: string,
@@ -421,6 +545,20 @@ class ManaboProvider extends AbstractChukyoProvider {
         );
     }
 
+    /**
+     * MaNaBoからクイズの結果を取得する
+     * @param userId - 学籍番号
+     * @param password - パスワード
+     * @param authFunc - Shibboleth認証関数
+     * @param pluginId - プラグインID
+     * @param classId - 授業ID
+     * @param id - クイズID
+     * @param directoryId - ディレクトリID
+     * @param attendId - 出席ID
+     * @param result - 結果フィルタ（デフォルト: "0"）
+     * @param page - ページ番号（デフォルト: 0）
+     * @returns パース済みのクイズ結果データ
+     */
     public async getQuizResult(
         userId: string,
         password: string,

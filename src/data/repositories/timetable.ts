@@ -40,6 +40,12 @@ class TimetableRepository {
         this.authRepository = _authRepository;
     }
 
+    /**
+     * 時間割データを取得する（キャッシュフォールバック付き）
+     * @param cacheOnly - trueの場合キャッシュのみ参照する
+     * @returns 時間割データ
+     * @throws {ShouldRefreshTimetableError} キャッシュが古い場合
+     */
     public async getTimetable(cacheOnly = false): Promise<z.infer<typeof V1TimetableSchema>> {
         const term = buildTermString();
         if (cacheOnly) {
@@ -65,6 +71,11 @@ class TimetableRepository {
         }
     }
 
+    /**
+     * MaNaBo・CUBICS・Alboから最新の時間割を取得し、UMEBO APIに登録する
+     * @param shibAuth - Shibboleth認証関数
+     * @throws {ShouldReSignInError} 認証情報が未設定の場合
+     */
     public async updateTimetable(shibAuth: shibbolethWebViewAuthFunction) {
         const firebaseId = await this.firebaseProvider.getFirebaseIdToken();
         const studentId = await this.authRepository.getStudentId();
