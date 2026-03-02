@@ -100,6 +100,28 @@ export const MANABO_URLS = {
 export const CHUKYO_SHIBBOLETH_URLS = {
     /** ログインフォームURL */
     loginForm: "https://shib.chukyo-u.ac.jp/cloudlink/module.php/core/loginuserpass.php",
+    /** CloudLink ログインフォームURL */
+    cloudlinkLoginForm: "https://shib.chukyo-u.ac.jp/cloudlink/module.php/cloudlink/loginuserpass.php",
+    /** WebAuthn API エンドポイント */
+    webauthn: "https://shib.chukyo-u.ac.jp/cloudlink/module.php/cloudlink/webauthn.php",
+    /** 認証方式チェック エンドポイント */
+    checktype: "https://shib.chukyo-u.ac.jp/cloudlink/module.php/cloudlink/checktype.php",
+    /** ACE User管理ポータル ログインURL */
+    clspLogin: "https://shib.chukyo-u.ac.jp/clsp/login",
+    /** ACE User メニュー */
+    userMenu: "https://shib.chukyo-u.ac.jp/User/Menu",
+    /** ACE User メニュー選択 */
+    userMenuSelect: "https://shib.chukyo-u.ac.jp/User/MenuSelect",
+    /** ACE User FIDO2デバイス追加 */
+    userFido2DeviceAdd: "https://shib.chukyo-u.ac.jp/User/Fido2DeviceAdd",
+    /** ACE User FIDO2デバイス追加完了 */
+    userFido2DeviceAddEnd: "https://shib.chukyo-u.ac.jp/User/Fido2DeviceAddEnd",
+    /** ACE User WebAuthn API */
+    userWebauthn: "https://shib.chukyo-u.ac.jp/User/webauthn",
+    /** Shibboleth RP ID */
+    rpId: "shib.chukyo-u.ac.jp",
+    /** Shibboleth オリジン */
+    origin: "https://shib.chukyo-u.ac.jp",
 } as const;
 
 /** 中京大学のリンク集 */
