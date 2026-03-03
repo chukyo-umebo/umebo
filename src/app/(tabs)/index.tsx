@@ -40,6 +40,13 @@ export default function Index() {
                 >
                     <ButtonText>ログアウト</ButtonText>
                 </Button>
+                <Button
+                    onPress={() => {
+                        router.push("/shib");
+                    }}
+                >
+                    <ButtonText>shib test</ButtonText>
+                </Button>
             </View>
 
             <View className="gap-4">

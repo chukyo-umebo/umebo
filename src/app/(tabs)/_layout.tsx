@@ -31,6 +31,8 @@ export default function TabsLayout() {
                 <Stack.Screen name="assignment" />
                 <Stack.Screen name="calendar" />
                 <Stack.Screen name="timetable" />
+
+                <Stack.Screen name="shib" />
             </Stack>
 
             {
