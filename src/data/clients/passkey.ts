@@ -172,7 +172,9 @@ function compactSignatureToDER(compact: Uint8Array): Uint8Array {
 
 /** SHA-256 ハッシュを計算 */
 async function sha256(data: Uint8Array): Promise<Uint8Array> {
-    const digest = await Crypto.digest(Crypto.CryptoDigestAlgorithm.SHA256, data.buffer as ArrayBuffer);
+    const normalized = new Uint8Array(data.byteLength);
+    normalized.set(data);
+    const digest = await Crypto.digest(Crypto.CryptoDigestAlgorithm.SHA256, normalized);
     return new Uint8Array(digest);
 }
 

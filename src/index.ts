@@ -1,5 +1,6 @@
 /* eslint-disable import/first */
 // Import side effects first and services
+import 'react-native-get-random-values';
 
 // Initialize services
 import {

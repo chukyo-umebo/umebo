@@ -18,7 +18,7 @@ import { Text } from "@/presentation/components/ui/text";
 const PASSKEY_STORAGE_PREFIX = "umebo-test-passkey";
 
 function passkeyStorageKey(userId: string) {
-    return `${PASSKEY_STORAGE_PREFIX}:${userId}`;
+    return `${PASSKEY_STORAGE_PREFIX}.${userId}`;
 }
 
 function maskCredentialId(credentialId: string) {
