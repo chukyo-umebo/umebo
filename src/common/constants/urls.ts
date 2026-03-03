@@ -108,6 +108,8 @@ export const CHUKYO_SHIBBOLETH_URLS = {
     checktype: "https://shib.chukyo-u.ac.jp/cloudlink/module.php/cloudlink/checktype.php",
     /** ACE User管理ポータル ログインURL */
     clspLogin: "https://shib.chukyo-u.ac.jp/clsp/login",
+    /** CLSP SAML ログインURL (パスキー登録フローの起点) */
+    clspSamlLogin: "https://shib.chukyo-u.ac.jp/clsp/saml/login",
     /** ACE User メニュー */
     userMenu: "https://shib.chukyo-u.ac.jp/User/Menu",
     /** ACE User メニュー選択 */
