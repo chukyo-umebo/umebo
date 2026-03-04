@@ -12,10 +12,6 @@ export default function TabsLayout() {
                 }}
             >
                 <Stack.Screen name="index" />
-                <Stack.Screen name="campus" />
-                <Stack.Screen name="notification" />
-                <Stack.Screen name="password" />
-                <Stack.Screen name="terms" />
             </Stack>
         </>
     );

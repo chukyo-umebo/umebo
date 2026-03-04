@@ -15,11 +15,12 @@ import "./global.css";
 
 import { appInfoRepository } from "@/data/repositories/app-info";
 import { googleSignInService } from "@/domain/services/google-signin";
+import { LoginStep } from "@/domain/services/auth";
 
 // @@iconify-code-gen
 
 function Routes() {
-    const { isLoggedIn } = useAuthState();
+    const { loginStep } = useAuthState();
     const router = useRouter();
 
     // すぐにやるとios版でrouteが設定されておらずエラーを吐くことがあるため仕方なくsetTimeoutする
@@ -51,7 +52,7 @@ function Routes() {
                 headerShown: false,
             }}
         >
-            <Stack.Protected guard={isLoggedIn}>
+            <Stack.Protected guard={loginStep === LoginStep.LoggedIn}>
                 <Stack.Screen name="(tabs)" />
             </Stack.Protected>
             <Stack.Screen name="login" />

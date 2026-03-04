@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { Cookies } from "@react-native-cookies/cookies";
 import { getRemoteConfig, getValue } from "@react-native-firebase/remote-config";
 import { z } from "zod";
@@ -14,6 +15,8 @@ import { V1MessageSchema } from "../../common/types/umebo-api-schema";
 import { firebaseProvider } from "../provider/firebase";
 import { storageProvider } from "../provider/storage";
 import { umeboapiProvider } from "../provider/umebo-api";
+
+
 
 class AuthRepository {
     private umeboapiProvider: typeof umeboapiProvider;
@@ -56,43 +59,21 @@ class AuthRepository {
     }
 
     /**
-     * ユーザーがログイン済みかどうかを確認する
-     * @returns 学籍番号とパスワードが保存されていればtrue
-     */
-    public async isLoggedIn(): Promise<boolean> {
-        const studentId = await this.storageProvider.getStudentId();
-        const password = await this.storageProvider.getPassword();
-        return studentId !== null && password !== null;
-    }
-
-    /**
      * 認証情報をセキュアストレージに保存する
      * @param studentId - 学籍番号
      * @param password - パスワード
      */
-    public async saveCredentials(studentId: string, password: string): Promise<void> {
+    public async saveIdPass(studentId: string, password: string): Promise<void> {
         await Promise.all([this.storageProvider.setStudentId(studentId), this.storageProvider.setPassword(password)]);
     }
 
     /** セキュアストレージから認証情報を削除する */
     public async clearCredentials(): Promise<void> {
-        await Promise.all([this.storageProvider.removeStudentId(), this.storageProvider.removePassword()]);
-    }
-
-    /**
-     * 保存された学籍番号を取得する
-     * @returns 学籍番号、未保存の場合はnull
-     */
-    public async getStudentId(): Promise<string | null> {
-        return this.storageProvider.getStudentId();
-    }
-
-    /**
-     * 保存されたパスワードを取得する
-     * @returns パスワード、未保存の場合はnull
-     */
-    public async getPassword(): Promise<string | null> {
-        return this.storageProvider.getPassword();
+        await Promise.all([
+            this.storageProvider.removeStudentId(),
+            this.storageProvider.removePassword(),
+            this.storageProvider.removePasskey(),
+        ]);
     }
 
     /**
@@ -104,14 +85,17 @@ class AuthRepository {
      * この関数の後に {@link registerPasskeyWithOTP} を呼び出して
      * OTP 認証と Passkey 登録を行う。
      *
-     * @param userId - 学籍番号
-     * @param password - パスワード
      * @returns OTP 入力待ちのセッション情報
      * @throws UnauthorizedError ID/PW が正しくない場合
      * @throws OtpNotEnabledError OTP 認証が有効化されていない場合
      * @throws AuthProcessError 認証処理中にエラーが発生した場合
      */
-    public async shibLoginWithPassword(userId: string, password: string): Promise<PasswordLoginSession> {
+    public async getLoginSession(): Promise<PasswordLoginSession> {
+        const userId = await this.storageProvider.getStudentId();
+        const password = await this.storageProvider.getPassword();
+        if (!userId || !password) {
+            throw new ShouldReSignInError();
+        }
         return await loginWithPassword(userId, password);
     }
 
@@ -120,16 +104,12 @@ class AuthRepository {
      *
      * @param session - {@link loginWithPassword} の戻り値
      * @param otp - ワンタイムパスワード
-     * @param displayName - パスキーの表示名 (例: "umebo")
-     * @returns 登録された擬似 Passkey (SecureStore に保存すること)
+     * @returns 登録された擬似 Passkey
      * @throws UnauthorizedError OTP が正しくない場合
      * @throws AuthProcessError 認証処理中にエラーが発生した場合
      */
-    public async shibRegisterPasskeyWithOTP(
-        session: PasswordLoginSession,
-        otp: string,
-        displayName: string
-    ): Promise<PasskeyCredential> {
+    public async shibRegisterPasskeyWithOTP(session: PasswordLoginSession, otp: string): Promise<PasskeyCredential> {
+        const displayName = this.makePasskeyDisplayName();
         const passkey = await registerPasskeyWithOTP(session, otp, displayName);
         await this.storageProvider.setPasskey(passkey);
         return passkey;
@@ -169,6 +149,11 @@ class AuthRepository {
         );
 
         return await queuedLogin;
+    }
+
+    private makePasskeyDisplayName(): string {
+        const os = Platform.OS;
+        return `umebo for ${os}`;
     }
 }
 

@@ -1,7 +1,12 @@
 import { GoogleSignin, isSuccessResponse, SignInSuccessResponse } from "@react-native-google-signin/google-signin";
 import { jwtDecode } from "jwt-decode";
 
+
+
 import { authRepository } from "@/data/repositories/auth";
+import { updateAuthState } from "@/presentation/contexts/AuthStateContext";
+import { LoginStep } from "./auth";
+
 
 export type GoogleSignInFlowResult =
     | { kind: "success"; studentId: string; firebaseUser: SignInSuccessResponse["data"] }
@@ -91,6 +96,7 @@ class GoogleSignInService {
             // UMEBOにログイン
             await this.authRepository.loginUmeboAPI();
 
+            updateAuthState(LoginStep.GoogleSignIn);
             return {
                 kind: "success",
                 firebaseUser,

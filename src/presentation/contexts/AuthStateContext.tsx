@@ -1,9 +1,10 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-import { authRepository } from "@/data/repositories/auth";
+import { AuthService, LoginStep } from "@/domain/services/auth";
+
 
 interface AuthStateContextType {
-    isLoggedIn: boolean;
+    loginStep: LoginStep;
     login: () => void;
     logout: () => void;
 }
@@ -11,11 +12,11 @@ interface AuthStateContextType {
 const AuthStateContext = createContext<AuthStateContextType | undefined>(undefined);
 
 // React外から認証状態を更新するためのグローバル関数
-let globalSetIsLoggedIn: ((isLoggedIn: boolean) => void) | null = null;
+let globalSetLoginStep: ((loginStep: LoginStep) => void) | null = null;
 
-export const updateAuthState = (isLoggedIn: boolean) => {
-    if (globalSetIsLoggedIn) {
-        globalSetIsLoggedIn(isLoggedIn);
+export const updateAuthState = (loginStep: LoginStep) => {
+    if (globalSetLoginStep) {
+        globalSetLoginStep(loginStep);
     }
 };
 
@@ -24,14 +25,14 @@ interface AuthStateProviderProps {
 }
 
 export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [loginStep, setLoginStep] = useState<LoginStep>(LoginStep.NotLoggedIn);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     // グローバル関数に状態更新関数を登録
     useEffect(() => {
-        globalSetIsLoggedIn = setIsLoggedIn;
+        globalSetLoginStep = setLoginStep;
         return () => {
-            globalSetIsLoggedIn = null;
+            globalSetLoginStep = null;
         };
     }, []);
 
@@ -39,10 +40,11 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                setIsLoggedIn(await authRepository.isLoggedIn());
+                const loginStep = await AuthService.getLoginStep();
+                setLoginStep(loginStep);
             } catch (error) {
                 console.error("Failed to check login status:", error);
-                setIsLoggedIn(false);
+                setLoginStep(LoginStep.NotLoggedIn);
             } finally {
                 setIsLoading(false);
             }
@@ -52,11 +54,11 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
     }, []);
 
     const login = () => {
-        setIsLoggedIn(true);
+        updateAuthState(LoginStep.LoggedIn);
     };
 
     const logout = () => {
-        setIsLoggedIn(false);
+        updateAuthState(LoginStep.NotLoggedIn);
     };
 
     // 初期ロード中は何も表示しない（または Loading コンポーネントを表示）
@@ -64,7 +66,7 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
         return null;
     }
 
-    return <AuthStateContext.Provider value={{ isLoggedIn, login, logout }}>{children}</AuthStateContext.Provider>;
+    return <AuthStateContext.Provider value={{ loginStep, login, logout }}>{children}</AuthStateContext.Provider>;
 };
 
 export const useAuthState = () => {
