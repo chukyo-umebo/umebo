@@ -31,6 +31,7 @@ module.exports = function (api) {
                         "twemoji:smiling-face-with-smiling-eyes",
                         "octicon:chevron-down-12",
                         "octicon:chevron-up-12",
+                        "logos:google-icon",
                     ],
                 },
             ],
