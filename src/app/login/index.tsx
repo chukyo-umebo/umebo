@@ -1,11 +1,13 @@
+import { useRouter } from "expo-router";
 import { Image, useColorScheme, View } from "react-native";
 
 import { GoogleLoginButton } from "@/presentation/components/parts/google-login-button";
 import { LoginTemplate } from "@/presentation/components/template/login";
 import { Text } from "@/presentation/components/ui/text";
 
-export default function Login() {
+export default function Index() {
     const colorScheme = useColorScheme();
+    const router = useRouter();
 
     return (
         <LoginTemplate>
@@ -62,7 +64,11 @@ export default function Login() {
                 </View>
 
                 <View className="mb-8 items-center">
-                    <GoogleLoginButton />
+                    <GoogleLoginButton
+                        onPress={() => {
+                            router.push("/login/chukyo-pass");
+                        }}
+                    />
                 </View>
             </View>
         </LoginTemplate>
