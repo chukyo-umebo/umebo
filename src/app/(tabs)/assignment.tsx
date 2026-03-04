@@ -8,7 +8,6 @@ import { assignmentRepository } from "@/data/repositories/assignment";
 import { MainTemplate } from "@/presentation/components/template/main";
 import { Accordion, AccordionItem } from "@/presentation/components/ui/accordion";
 import { Text } from "@/presentation/components/ui/text";
-import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
 
 const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -86,7 +85,6 @@ function sortAssignments(items: Assignment[]) {
 }
 
 export default function Index() {
-    const { chukyoShibbolethAuth } = useChukyoShibboleth();
     const [assignmentData, setAssignmentData] = useState<z.infer<typeof V1AssignmentsSchema>>({ assignments: [] });
     const [selectedDateId, setSelectedDateId] = useState<string | undefined>(undefined);
     const [contentStartY, setContentStartY] = useState(0);
@@ -95,7 +93,7 @@ export default function Index() {
 
     const onRefresh = useCallback(async () => {
         try {
-            await toast.promise(assignmentRepository.updateAssignments(chukyoShibbolethAuth), {
+            await toast.promise(assignmentRepository.updateAssignments(), {
                 loading: "課題を更新中...",
                 success: "課題が更新されました",
                 error: "課題の更新に失敗しました",
@@ -103,7 +101,7 @@ export default function Index() {
         } catch (error) {
             console.error("Failed to refresh assignments", error);
         }
-    }, [chukyoShibbolethAuth]);
+    }, []);
 
     const fetchAssignments = useCallback(async () => {
         try {

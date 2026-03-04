@@ -8,22 +8,26 @@ import { Text } from "@/presentation/components/ui/text";
 
 export default function Index() {
     // 取得内容、関数は適宜調整
-    const univBusTimes= ["15分30秒", "25分30秒"];
+    const univBusTimes = ["15分30秒", "25分30秒"];
     const stationBusTimes = ["10分30秒", "20分30秒"];
 
     const [activeTab, setActiveTab] = useState<"univ" | "station">("univ");
 
     return (
         <MainTemplate title="バス" subtitle="豊田キャンパスのバスの時間がわかります">
-            <View className="gap-4 px-3 pt-2 pb-10">
-                <View className="flex-row gap-4 px-2 mb-2">
+            <View className="gap-4 px-3 pb-10 pt-2">
+                <View className="mb-2 flex-row gap-4 px-2">
                     <TouchableOpacity onPress={() => setActiveTab("univ")}>
-                        <Text className={`text-[1.25rem] font-bold ${activeTab === "univ" ? "text-[#1b1a19]" : "text-[#b8b6b4]"}`}>
+                        <Text
+                            className={`text-[1.25rem] font-bold ${activeTab === "univ" ? "text-[#1b1a19]" : "text-[#b8b6b4]"}`}
+                        >
                             大学から
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setActiveTab("station")}>
-                        <Text className={`text-[1.25rem] font-bold ${activeTab === "station" ? "text-[#1b1a19]" : "text-[#b8b6b4]"}`}>
+                        <Text
+                            className={`text-[1.25rem] font-bold ${activeTab === "station" ? "text-[#1b1a19]" : "text-[#b8b6b4]"}`}
+                        >
                             駅から
                         </Text>
                     </TouchableOpacity>
@@ -38,7 +42,6 @@ export default function Index() {
         </MainTemplate>
     );
 }
-
 
 // ほぼほぼindexのもの。components/parts/に作る？
 function BusTimeView({ time }: { time: string }) {

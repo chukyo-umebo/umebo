@@ -6,7 +6,6 @@ import {
 } from "@chukyo-umebo/web_parser";
 
 import { ALBO_URLS } from "@/common/constants/urls";
-import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
 import { httpClient, HttpClientOptions } from "@/data/clients/httpClient";
 import { AbstractChukyoProvider } from "./abstractChukyoProvider";
 
@@ -17,26 +16,18 @@ class AlboProvider extends AbstractChukyoProvider {
 
     /**
      * Alboサービスから認証付きでデータを取得
-     * @param userId - 中京大学の学籍番号
-     * @param password - ユーザーのパスワード
      * @param path - 取得対象のAPIパス(例: "/api/v1/class/12345/")
      * @param options - HTTPリクエストのオプション（ヘッダーなど）
      * @param authFunc - Shibboleth認証を行うコールバック関数
      * @returns レスポンスのテキストデータ
      */
-    private async fetch(
-        userId: string,
-        password: string,
-        path: string,
-        options: HttpClientOptions,
-        authFunc: shibbolethWebViewAuthFunction
-    ): Promise<string> {
+    private async fetch(path: string, options: HttpClientOptions): Promise<string> {
         const { headers: headerOptions, ...othersOptions } = options;
         const response = await httpClient(`${this.baseUrl}${path}`, {
             clientMode: "portal",
             credentials: "omit",
             headers: {
-                cookie: await this.getAuthedCookie(userId, password, authFunc),
+                cookie: await this.getAuthedCookie(),
                 "Accept-Language": "ja",
                 ...headerOptions,
             },
@@ -48,86 +39,60 @@ class AlboProvider extends AbstractChukyoProvider {
 
     /**
      * Alboから学年暦カレンダーデータを取得する
-     * @param userId - 学籍番号
-     * @param password - パスワード
      * @param authFunc - Shibboleth認証関数
      * @returns パース済みのカレンダーデータ
      */
-    public async getCalendar(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+    public async getCalendar() {
         return parseAlboCalendar(
             await this.fetch(
-                userId,
-                password,
                 "/api/calendar/?page_size=1000&calendar_source_uuid=ac304d66-b0a8-11f0-afed-06347f3ce845",
                 {
                     method: "GET",
-                },
-                authFunc
+                }
             )
         );
     }
 
     /**
      * Alboからユーザーの個人情報を取得する
-     * @param userId - 学籍番号
-     * @param password - パスワード
      * @param authFunc - Shibboleth認証関数
      * @returns パース済みの個人情報データ
      */
-    public async getPersonal(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+    public async getPersonal() {
         return parseAlboPersonal(
-            await this.fetch(
-                userId,
-                password,
-                "/api/auth/check-logged-in",
-                {
-                    method: "GET",
-                },
-                authFunc
-            )
+            await this.fetch("/api/auth/check-logged-in", {
+                method: "GET",
+            })
         );
     }
 
     /**
      * Alboからお知らせ一覧を取得する
-     * @param userId - 学籍番号
-     * @param password - パスワード
      * @param authFunc - Shibboleth認証関数
      * @returns パース済みのお知らせデータ
      */
-    public async getInformation(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+    public async getInformation() {
         return parseAlboInformation(
             await this.fetch(
-                userId,
-                password,
                 "/api/information/1?page_size=20&category_uuid=",
                 // "/api/information/1?status=unread&page_size=10&category_uuid=&recursive=1",
                 {
                     method: "GET",
-                },
-                authFunc
+                }
             )
         );
     }
 
     /**
      * Alboから時間割データを取得する
-     * @param userId - 学籍番号
-     * @param password - パスワード
      * @param authFunc - Shibboleth認証関数
      * @returns パース済みの時間割データ
      */
-    public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+    public async getTimetable() {
         return parseAlboTimetable(
-            await this.fetch(
-                userId,
-                password,
-                "/api/class/time-table/",
-                {
-                    method: "GET",
-                },
-                authFunc
-            )
+            await this.fetch("/api/class/time-table/", {
+                method: "GET",
+            })
         );
     }
 }

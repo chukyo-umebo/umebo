@@ -15,7 +15,7 @@ import ReactNativeBlobUtil from "react-native-blob-util";
 import CookieManager, { Cookies } from "@react-native-cookies/cookies";
 
 import { CHUKYO_SHIBBOLETH_URLS } from "@/common/constants/urls";
-import { AuthProcessError, UnauthorizedError } from "@/common/errors/auth";
+import { AuthProcessError, OtpNotEnabledError, UnauthorizedError } from "@/common/errors/auth";
 import { buildAssertionResponse, buildRegistrationResponse, type PasskeyCredential } from "./passkey";
 
 // ============================================
@@ -258,6 +258,7 @@ async function getCookies(url: string): Promise<Cookies> {
  * @param password - パスワード
  * @returns OTP 入力待ちのセッション情報
  * @throws UnauthorizedError ID/PW が正しくない場合
+ * @throws OtpNotEnabledError OTP 認証が有効化されていない場合
  * @throws AuthProcessError 認証処理中にエラーが発生した場合
  */
 export async function loginWithPassword(userId: string, password: string): Promise<PasswordLoginSession> {
@@ -311,7 +312,50 @@ export async function loginWithPassword(userId: string, password: string): Promi
     }
     devDebug("loginWithPassword:authStateResolved", { authStateLength: authState.length });
 
-    // 3. ID/PW でログイン (authtype=0: パスワード認証)
+    // 3. checktype.php で OTP 認証可否を確認
+    const checkTypeResponse = await httpRequest({
+        method: "POST",
+        url: CHUKYO_SHIBBOLETH_URLS.checktype,
+        body: JSON.stringify({
+            AuthState: authState,
+            params: {
+                username: userId,
+                UserAgent: USER_AGENT,
+            },
+        }),
+        contentType: "application/json",
+        origin: CHUKYO_SHIBBOLETH_URLS.origin,
+    });
+
+    if (checkTypeResponse.status !== 200) {
+        devDebug("loginWithPassword:checkTypeStatusError", { status: checkTypeResponse.status });
+        throw new AuthProcessError();
+    }
+
+    let authTypes: string[] = [];
+    try {
+        const parsed: unknown = JSON.parse(checkTypeResponse.body);
+        if (typeof parsed === "object" && parsed !== null && "authType" in parsed) {
+            const candidate = (parsed as { authType?: unknown }).authType;
+            if (Array.isArray(candidate)) {
+                authTypes = candidate.filter((value): value is string => typeof value === "string");
+            }
+        }
+    } catch {
+        devDebug("loginWithPassword:checkTypeParseError");
+        throw new AuthProcessError();
+    }
+
+    const otpEnabled = authTypes.some((type) => type.toUpperCase() === "OTP");
+    devDebug("loginWithPassword:checkType", {
+        authTypes,
+        otpEnabled,
+    });
+    if (!otpEnabled) {
+        throw new OtpNotEnabledError();
+    }
+
+    // 4. ID/PW でログイン (authtype=0: パスワード認証)
     const passwordResponse = await httpRequest({
         method: "POST",
         url: CHUKYO_SHIBBOLETH_URLS.cloudlinkLoginForm,
@@ -331,7 +375,7 @@ export async function loginWithPassword(userId: string, password: string): Promi
         throw new AuthProcessError();
     }
 
-    // 4. 認証エラーチェック (ID/PW 間違い)
+    // 5. 認証エラーチェック (ID/PW 間違い)
     if (isAuthError(passwordResponse.body)) {
         devDebug("loginWithPassword:unauthorized");
         throw new UnauthorizedError();

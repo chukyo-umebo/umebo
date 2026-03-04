@@ -1,18 +1,15 @@
 import { AlboTimetableItemDTO, CubicsAsTimetableSlotDTO } from "@chukyo-umebo/web_parser";
 import { z } from "zod";
 
-import { ShouldReSignInError } from "@/common/errors/auth";
 import { ShouldRefreshTimetableError } from "@/common/errors/timetable";
 import { V1TimetableSchema } from "@/common/types/umebo-api-schema";
 import { buildTermString } from "@/utils";
-import { shibbolethWebViewAuthFunction } from "../clients/chukyo-shibboleth";
 import { cacheProvider } from "../provider/cache";
 import { alboProvider } from "../provider/chukyo-univ/albo";
 import { cubicsProvider } from "../provider/chukyo-univ/cubics";
 import { manaboProvider } from "../provider/chukyo-univ/manabo";
 import { firebaseProvider } from "../provider/firebase";
 import { umeboapiProvider } from "../provider/umebo-api";
-import { authRepository } from "./auth";
 
 class TimetableRepository {
     private readonly cubicsProvider: typeof cubicsProvider;
@@ -21,15 +18,13 @@ class TimetableRepository {
     private readonly cacheProvider: typeof cacheProvider;
     private readonly firebaseProvider: typeof firebaseProvider;
     private readonly umeboApiRepository: typeof umeboapiProvider;
-    private readonly authRepository: typeof authRepository;
     constructor(
         _cubicsProvider = cubicsProvider,
         _manaboProvider = manaboProvider,
         _alboProvider = alboProvider,
         _cacheProvider = cacheProvider,
         _firebaseProvider = firebaseProvider,
-        _umeboApiRepository = umeboapiProvider,
-        _authRepository = authRepository
+        _umeboApiRepository = umeboapiProvider
     ) {
         this.cubicsProvider = _cubicsProvider;
         this.manaboProvider = _manaboProvider;
@@ -37,7 +32,6 @@ class TimetableRepository {
         this.cacheProvider = _cacheProvider;
         this.firebaseProvider = _firebaseProvider;
         this.umeboApiRepository = _umeboApiRepository;
-        this.authRepository = _authRepository;
     }
 
     /**
@@ -73,26 +67,20 @@ class TimetableRepository {
 
     /**
      * MaNaBo・CUBICS・Alboから最新の時間割を取得し、UMEBO APIに登録する
-     * @param shibAuth - Shibboleth認証関数
      * @throws {ShouldReSignInError} 認証情報が未設定の場合
      */
-    public async updateTimetable(shibAuth: shibbolethWebViewAuthFunction) {
+    public async updateTimetable() {
         const firebaseId = await this.firebaseProvider.getFirebaseIdToken();
-        const studentId = await this.authRepository.getStudentId();
-        const password = await this.authRepository.getPassword();
-        if (!studentId || !password) {
-            throw new ShouldReSignInError();
-        }
 
         let cubicsTimetableResult;
         try {
-            cubicsTimetableResult = await this.cubicsProvider.getTimetable(studentId, password, shibAuth);
+            cubicsTimetableResult = await this.cubicsProvider.getTimetable();
         } catch (e) {
             __DEV__ && console.log("cubicsから時間割の取得に失敗", e);
             cubicsTimetableResult = { success: false };
         }
-        const manaboTimetableResult = await this.manaboProvider.getTimetable(studentId, password, shibAuth);
-        const alboTimetableResult = await this.alboProvider.getTimetable(studentId, password, shibAuth);
+        const manaboTimetableResult = await this.manaboProvider.getTimetable();
+        const alboTimetableResult = await this.alboProvider.getTimetable();
 
         if (!manaboTimetableResult.success) {
             throw new Error("Failed to parse manabo timetable");

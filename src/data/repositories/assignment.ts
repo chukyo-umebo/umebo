@@ -1,46 +1,28 @@
 import { z } from "zod";
 
-import { ShouldReSignInError } from "@/common/errors/auth";
 import { V1AssignmentsSchema, V1PostAssignmentsSchema } from "@/common/types/umebo-api-schema";
-import { shibbolethWebViewAuthFunction } from "../clients/chukyo-shibboleth";
 import { cacheProvider } from "../provider/cache";
-import { alboProvider } from "../provider/chukyo-univ/albo";
-import { cubicsProvider } from "../provider/chukyo-univ/cubics";
-import { manaboProvider } from "../provider/chukyo-univ/manabo";
 import { firebaseProvider } from "../provider/firebase";
 import { umeboapiProvider } from "../provider/umebo-api";
-import { authRepository } from "./auth";
 import { classDataRepository } from "./class-data";
 import { timetableRepository } from "./timetable";
 
 class AssignmentRepository {
-    private readonly cubicsProvider: typeof cubicsProvider;
-    private readonly manaboProvider: typeof manaboProvider;
-    private readonly alboProvider: typeof alboProvider;
     private readonly cacheProvider: typeof cacheProvider;
     private readonly firebaseProvider: typeof firebaseProvider;
     private readonly umeboApiRepository: typeof umeboapiProvider;
-    private readonly authRepository: typeof authRepository;
     private readonly classDataRepository: typeof classDataRepository;
     private readonly timetableRepository: typeof timetableRepository;
     constructor(
-        _cubicsProvider = cubicsProvider,
-        _manaboProvider = manaboProvider,
-        _alboProvider = alboProvider,
         _cacheProvider = cacheProvider,
         _firebaseProvider = firebaseProvider,
         _umeboApiRepository = umeboapiProvider,
-        _authRepository = authRepository,
         _classDataRepository = classDataRepository,
         _timetableRepository = timetableRepository
     ) {
-        this.cubicsProvider = _cubicsProvider;
-        this.manaboProvider = _manaboProvider;
-        this.alboProvider = _alboProvider;
         this.cacheProvider = _cacheProvider;
         this.firebaseProvider = _firebaseProvider;
         this.umeboApiRepository = _umeboApiRepository;
-        this.authRepository = _authRepository;
         this.classDataRepository = _classDataRepository;
         this.timetableRepository = _timetableRepository;
     }
@@ -79,13 +61,8 @@ class AssignmentRepository {
      * @param shibAuth - Shibboleth認証関数
      * @throws {ShouldReSignInError} 認証情報が未設定の場合
      */
-    public async updateAssignments(shibAuth: shibbolethWebViewAuthFunction) {
+    public async updateAssignments() {
         const firebaseIdToken = await this.firebaseProvider.getFirebaseIdToken();
-        const studentId = await this.authRepository.getStudentId();
-        const password = await this.authRepository.getPassword();
-        if (!studentId || !password) {
-            throw new ShouldReSignInError();
-        }
 
         const savedAssignmentsRaw = await this.umeboApiRepository.getAssignments(firebaseIdToken);
         const savedAssignments = savedAssignmentsRaw.assignments.filter((e) => e.classDetail);
@@ -97,7 +74,7 @@ class AssignmentRepository {
         const manaboClassIds = timetable.classes.map((c) => c.manaboId);
 
         for (const manaboClassId of manaboClassIds) {
-            const dirContents = await this.classDataRepository.getContents(manaboClassId, shibAuth);
+            const dirContents = await this.classDataRepository.getContents(manaboClassId);
             for (const dir of dirContents) {
                 const assignments = dir.contents.filter((content) => content.type === "report");
                 for (const asg of assignments) {

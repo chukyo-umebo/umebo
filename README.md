@@ -32,9 +32,12 @@ Common（型定義・エラー・定数）
 
 ### 各レイヤーの責務
 
-- **Presentation** — Expo Routerの画面定義、UIコンポーネント（ui / parts / template）、認証状態やShibbolethのReact Context
+- **Presentation** — Expo Routerの画面定義、UIコンポーネント（ui / parts / template）、認証状態やShibbolethのReact
+  Context
 - **Domain** — Google Sign-InやFirebase Auth認証のオーケストレーション等のビジネスロジック
-- **Data** — リポジトリが複数プロバイダーを統合し、キャッシュ管理やAPIへのデータ同期を担当。プロバイダーは大学ポータル（Albo, CUBICS, MaNaBo）やUMEBO API、Firebase、SecureStoreへの低レベルアクセスを提供
+- **Data**
+  — リポジトリが複数プロバイダーを統合し、キャッシュ管理やAPIへのデータ同期を担当。プロバイダーは大学ポータル（Albo,
+  CUBICS, MaNaBo）やUMEBO API、Firebase、SecureStoreへの低レベルアクセスを提供
 - **Common** — URL定数、Zodスキーマ、カスタムエラークラスなどの共有リソース
 
 ## ディレクトリ構成

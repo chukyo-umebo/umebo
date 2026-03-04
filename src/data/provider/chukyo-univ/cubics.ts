@@ -2,7 +2,6 @@ import { parseCubicsAsTimetable } from "@chukyo-umebo/web_parser";
 
 import { CUBICS_URLS } from "@/common/constants/urls";
 import { ExpiredSessionError } from "@/common/errors/auth";
-import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
 import { httpClient, HttpClientOptions } from "@/data/clients/httpClient";
 import { AbstractChukyoProvider } from "./abstractChukyoProvider";
 
@@ -17,20 +16,11 @@ class CubicsProvider extends AbstractChukyoProvider {
 
     /**
      * Cubicsサービスから認証付きでデータを取得
-     * @param userId - 中京大学の学籍番号
-     * @param password - ユーザーのパスワード
      * @param path - 取得対象のAPIパス(例: "/api/v1/class/12345/")
      * @param options - HTTPリクエストのオプション（ヘッダーなど）
-     * @param authFunc - Shibboleth認証を行うコールバック関数
      * @returns レスポンスのテキストデータ
      */
-    private async fetch(
-        userId: string,
-        password: string,
-        path: string,
-        options: HttpClientOptions,
-        authFunc: shibbolethWebViewAuthFunction
-    ): Promise<string> {
+    private async fetch(path: string, options: HttpClientOptions): Promise<string> {
         const { headers: headerOptions, ...othersOptions } = options;
 
         for (let attempt = 0; attempt <= this.retryAuthCount; attempt++) {
@@ -38,7 +28,7 @@ class CubicsProvider extends AbstractChukyoProvider {
                 clientMode: "portal",
                 credentials: "omit",
                 headers: {
-                    cookie: await this.getAuthedCookie(userId, password, authFunc),
+                    cookie: await this.getAuthedCookie(),
                     "Accept-Language": "ja",
                     ...headerOptions,
                 },
@@ -91,22 +81,13 @@ class CubicsProvider extends AbstractChukyoProvider {
 
     /**
      * CUBICSから時間割データを取得する
-     * @param userId - 学籍番号
-     * @param password - パスワード
-     * @param authFunc - Shibboleth認証関数
      * @returns パース済みの時間割データ
      */
-    public async getTimetable(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+    public async getTimetable() {
         return parseCubicsAsTimetable(
-            await this.fetch(
-                userId,
-                password,
-                "/unias/UnSSOLoginControl2?REQ_ACTION_DO=/ARF010.do&REQ_PRFR_MNU_ID=MNUIDSTD0103",
-                {
-                    method: "GET",
-                },
-                authFunc
-            )
+            await this.fetch("/unias/UnSSOLoginControl2?REQ_ACTION_DO=/ARF010.do&REQ_PRFR_MNU_ID=MNUIDSTD0103", {
+                method: "GET",
+            })
         );
     }
 }

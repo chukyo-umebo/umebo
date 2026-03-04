@@ -9,17 +9,15 @@ import { calendarRepository } from "@/data/repositories/calendar";
 import { MainTemplate } from "@/presentation/components/template/main";
 import { Button, ButtonText } from "@/presentation/components/ui/button";
 import { Text } from "@/presentation/components/ui/text";
-import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
 
 export default function Index() {
     const [calendarDate, setCalendarDate] = useState(new Date());
     const [events, setEvents] = useState<{ title: string; start: Date; end: Date }[]>([]);
-    const { chukyoShibbolethAuth } = useChukyoShibboleth();
 
     useEffect(() => {
         const fetchCalendar = async () => {
             try {
-                const data = await calendarRepository.getCalendar(chukyoShibbolethAuth);
+                const data = await calendarRepository.getCalendar();
                 if (data && data.result && data.result.items) {
                     const formattedEvents = data.result.items.map((item) => ({
                         title: item.summary,
@@ -34,7 +32,7 @@ export default function Index() {
         };
 
         fetchCalendar();
-    }, [chukyoShibbolethAuth]);
+    }, []);
 
     return (
         <MainTemplate title="カレンダー" subtitle="中京大学の年間スケジュールが書いてあります" noOverScroll>

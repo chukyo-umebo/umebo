@@ -1,15 +1,7 @@
 import { ManaboClassContentDTO } from "@chukyo-umebo/web_parser";
 
-import { ShouldReSignInError } from "@/common/errors/auth";
 import { ParseError } from "@/common/errors/parse";
-import { shibbolethWebViewAuthFunction } from "../clients/chukyo-shibboleth";
-import { cacheProvider } from "../provider/cache";
-import { alboProvider } from "../provider/chukyo-univ/albo";
-import { cubicsProvider } from "../provider/chukyo-univ/cubics";
 import { manaboProvider } from "../provider/chukyo-univ/manabo";
-import { firebaseProvider } from "../provider/firebase";
-import { umeboapiProvider } from "../provider/umebo-api";
-import { authRepository } from "./auth";
 
 export interface ManaboBaseContentData {
     type: "file" | "report";
@@ -61,29 +53,9 @@ export interface ClassContent {
 }
 
 class ClassDataRepository {
-    private readonly cubicsProvider: typeof cubicsProvider;
     private readonly manaboProvider: typeof manaboProvider;
-    private readonly alboProvider: typeof alboProvider;
-    private readonly cacheProvider: typeof cacheProvider;
-    private readonly firebaseProvider: typeof firebaseProvider;
-    private readonly umeboApiRepository: typeof umeboapiProvider;
-    private readonly authRepository: typeof authRepository;
-    constructor(
-        _cubicsProvider = cubicsProvider,
-        _manaboProvider = manaboProvider,
-        _alboProvider = alboProvider,
-        _cacheProvider = cacheProvider,
-        _firebaseProvider = firebaseProvider,
-        _umeboApiRepository = umeboapiProvider,
-        _authRepository = authRepository
-    ) {
-        this.cubicsProvider = _cubicsProvider;
+    constructor(_manaboProvider = manaboProvider) {
         this.manaboProvider = _manaboProvider;
-        this.alboProvider = _alboProvider;
-        this.cacheProvider = _cacheProvider;
-        this.firebaseProvider = _firebaseProvider;
-        this.umeboApiRepository = _umeboApiRepository;
-        this.authRepository = _authRepository;
     }
 
     /**
@@ -94,17 +66,8 @@ class ClassDataRepository {
      * @throws {ShouldReSignInError} 認証情報が未設定の場合
      * @throws {ParseError} データのパースに失敗した場合
      */
-    private async getDirectory(
-        manaboClassId: string,
-        authFunc: shibbolethWebViewAuthFunction
-    ): Promise<{ directoryId: string; title: string }[]> {
-        const studentId = await this.authRepository.getStudentId();
-        const password = await this.authRepository.getPassword();
-        if (!studentId || !password) {
-            throw new ShouldReSignInError();
-        }
-
-        const data = await this.manaboProvider.getClassDirectory(studentId, password, authFunc, manaboClassId);
+    private async getDirectory(manaboClassId: string): Promise<{ directoryId: string; title: string }[]> {
+        const data = await this.manaboProvider.getClassDirectory(manaboClassId);
 
         if (data.success) {
             const directories = data.data.directories;
@@ -121,26 +84,13 @@ class ClassDataRepository {
     /**
      * 授業の全ディレクトリからコンテンツを取得する
      * @param manaboClassId - MaNaBo授業ID
-     * @param authFunc - Shibboleth認証関数
      * @returns ディレクトリごとのコンテンツ一覧
      * @throws {ShouldReSignInError} 認証情報が未設定の場合
      */
-    public async getContents(manaboClassId: string, authFunc: shibbolethWebViewAuthFunction): Promise<ClassContent[]> {
-        const studentId = await this.authRepository.getStudentId();
-        const password = await this.authRepository.getPassword();
-        if (!studentId || !password) {
-            throw new ShouldReSignInError();
-        }
-
+    public async getContents(manaboClassId: string): Promise<ClassContent[]> {
         const contents: ClassContent[] = [];
-        for (const directory of await this.getDirectory(manaboClassId, authFunc)) {
-            const fetchedContents = await this.manaboProvider.getClassContent(
-                studentId,
-                password,
-                authFunc,
-                manaboClassId,
-                directory.directoryId
-            );
+        for (const directory of await this.getDirectory(manaboClassId)) {
+            const fetchedContents = await this.manaboProvider.getClassContent(manaboClassId, directory.directoryId);
             if (!fetchedContents.success) {
                 __DEV__ &&
                     console.error(

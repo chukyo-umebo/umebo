@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack, useGlobalSearchParams, usePathname, useRouter } from "expo-router";
@@ -10,11 +10,9 @@ import * as firebase from "@react-native-firebase/app";
 
 import { GluestackUIProvider } from "@/presentation/components/ui/gluestack-ui-provider";
 import { AuthStateProvider, useAuthState } from "@/presentation/contexts/AuthStateContext";
-import { ChukyoShibbolethProvider } from "@/presentation/contexts/ChukyoShibbolethContext";
 
 import "./global.css";
 
-import ChukyoShibbolethWebView, { shibbolethWebViewRef } from "@/data/clients/chukyo-shibboleth";
 import { appInfoRepository } from "@/data/repositories/app-info";
 import { googleSignInService } from "@/domain/services/google-signin";
 
@@ -69,8 +67,6 @@ export default function RootLayout() {
     const colorMode = useColorScheme();
     const isDarkMode = colorMode === "dark";
 
-    const shibbolethRef = useRef<shibbolethWebViewRef>(null);
-
     // Firebase Analytics で画面遷移を記録
     useEffect(() => {
         const analytics = getAnalytics(firebase.getApp());
@@ -99,11 +95,8 @@ export default function RootLayout() {
         <GestureHandlerRootView>
             <GluestackUIProvider mode={colorMode ?? "light"}>
                 <AuthStateProvider>
-                    <ChukyoShibbolethProvider authRef={shibbolethRef}>
-                        <ChukyoShibbolethWebView ref={shibbolethRef} />
-                        <Toasts />
-                        <Routes />
-                    </ChukyoShibbolethProvider>
+                    <Toasts />
+                    <Routes />
                 </AuthStateProvider>
             </GluestackUIProvider>
         </GestureHandlerRootView>

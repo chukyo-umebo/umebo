@@ -1,5 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 
+import { PasskeyCredential } from "../clients/passkey";
+
 class StorageProvider {
     private readonly namespace: string;
 
@@ -48,6 +50,28 @@ class StorageProvider {
     /** セキュアストレージからパスワードを削除する */
     async removePassword(): Promise<void> {
         const key = this.makeKey("password");
+        await SecureStore.deleteItemAsync(key);
+    }
+
+    /** セキュアストレージからパスキーを取得する */
+    async getPasskey(): Promise<PasskeyCredential | null> {
+        const key = this.makeKey("passkey");
+        const value = await SecureStore.getItemAsync(key);
+        return value ? JSON.parse(value) : null;
+    }
+    /**
+     * セキュアストレージにパスキーを保存する
+     * @param value - 保存するパスキー
+     */
+    async setPasskey(value: PasskeyCredential): Promise<void> {
+        const key = this.makeKey("passkey");
+        await SecureStore.setItemAsync(key, JSON.stringify(value), {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        });
+    }
+    /** セキュアストレージからパスキーを削除する */
+    async removePasskey(): Promise<void> {
+        const key = this.makeKey("passkey");
         await SecureStore.deleteItemAsync(key);
     }
 

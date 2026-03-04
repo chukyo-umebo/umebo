@@ -1,7 +1,7 @@
 import { Cookies } from "@react-native-cookies/cookies";
 
 import { AuthProcessError } from "@/common/errors/auth";
-import { shibbolethWebViewAuthFunction } from "@/data/clients/chukyo-shibboleth";
+import { authRepository } from "@/data/repositories/auth";
 
 export interface CookieCredentials {
     cookies: Cookies;
@@ -12,7 +12,12 @@ export abstract class AbstractChukyoProvider {
     protected abstract readonly baseUrl: string;
     protected abstract readonly authEnterPath: string;
     protected abstract readonly authGoalPath: string;
+    protected readonly authRepository: typeof authRepository;
     protected credentialsRottenTime: number = 25 * 60 * 1000; // 25分
+
+    constructor(_authRepository = authRepository) {
+        this.authRepository = _authRepository;
+    }
 
     private authCookie: CookieCredentials = {
         cookies: {},
@@ -47,24 +52,15 @@ export abstract class AbstractChukyoProvider {
 
     /**
      * ユーザー情報をもとにShibboleth認証を行い、利用可能なクッキーを返します。
-     * @param userId 認証に利用するユーザーID
-     * @param password 認証に利用するパスワード
      * @param authFunc shibboleth認証を行う関数
      * @returns 認証後に利用可能なクッキー集合
      */
-    private async authentication(
-        userId: string,
-        password: string,
-        authFunc: shibbolethWebViewAuthFunction
-    ): Promise<Cookies> {
+    private async authentication(): Promise<Cookies> {
         // SSOログイン
-        // const authFunc = this.auth.authService.shibAuth;
-        const cookies = await authFunc({
-            enterUrl: `${this.baseUrl}${this.authEnterPath}`,
-            goalUrl: `${this.baseUrl}${this.authGoalPath}`,
-            userId,
-            password,
-        });
+        const cookies = await authRepository.shibLoginWithPasskey(
+            `${this.baseUrl}${this.authEnterPath}`,
+            `${this.baseUrl}${this.authGoalPath}`
+        );
 
         if (Object.keys(cookies).length === 0) {
             if (__DEV__) console.log("クッキーが取得できませんでした。");
@@ -82,31 +78,14 @@ export abstract class AbstractChukyoProvider {
      * @param authFunc shibboleth認証を行う関数
      * @returns HTTPヘッダー用に整形されたクッキー文字列
      */
-    protected async getAuthedCookie(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction) {
+    protected async getAuthedCookie() {
         let cookies: Cookies;
         if (this.authCookie.lastRefreshedAt.getTime() + this.credentialsRottenTime < Date.now()) {
-            cookies = await this.authentication(userId, password, authFunc);
+            cookies = await this.authentication();
         } else {
             cookies = this.authCookie.cookies;
         }
 
         return `; ${this.cookiesToString(cookies)}`;
-    }
-
-    /**
-     * 認証情報を用いてサービスへのアクセスが可能かテストします。
-     * @param userId 認証に利用するユーザーID
-     * @param password 認証に利用するパスワード
-     * @param authFunc shibboleth認証を行う関数
-     * @returns 認証成功ならtrueを返すPromise
-     * @throws 認証失敗や通信エラーが発生した場合は例外を投げる
-     */
-    public async authTest(userId: string, password: string, authFunc: shibbolethWebViewAuthFunction): Promise<boolean> {
-        try {
-            await this.authentication(userId, password, authFunc);
-            return true;
-        } catch (error) {
-            throw error;
-        }
     }
 }

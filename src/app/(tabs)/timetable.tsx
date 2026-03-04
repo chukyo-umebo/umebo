@@ -3,16 +3,12 @@ import { View } from "react-native";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { z } from "zod";
 
-
-
 import { V1TimetableSchema } from "@/common/types/umebo-api-schema";
 import { timetableRepository } from "@/data/repositories/timetable";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { MainTemplate } from "@/presentation/components/template/main";
-import { Text } from "@/presentation/components/ui/text";
-import { useChukyoShibboleth } from "@/presentation/contexts/ChukyoShibbolethContext";
 import { resolveThemeColor } from "@/presentation/components/ui/gluestack-ui-provider/theme-colors";
-
+import { Text } from "@/presentation/components/ui/text";
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri"];
 const DAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI"];
@@ -28,12 +24,11 @@ const PERIOD_TIMES = [
 type TimetableData = z.infer<typeof V1TimetableSchema>;
 
 export default function TimetableScreen() {
-    const { chukyoShibbolethAuth } = useChukyoShibboleth();
     const [timetable, setTimetable] = useState<TimetableData | null>(null);
 
     const onRefresh = useCallback(async () => {
         try {
-            await toast.promise(timetableRepository.updateTimetable(chukyoShibbolethAuth), {
+            await toast.promise(timetableRepository.updateTimetable(), {
                 loading: "時間割を更新中...",
                 success: "時間割が更新されました",
                 error: "時間割の更新に失敗しました",
@@ -41,7 +36,7 @@ export default function TimetableScreen() {
         } catch (e) {
             console.error("Failed to refresh timetable", e);
         }
-    }, [chukyoShibbolethAuth]);
+    }, []);
 
     const fetchTimetable = useCallback(async () => {
         try {
