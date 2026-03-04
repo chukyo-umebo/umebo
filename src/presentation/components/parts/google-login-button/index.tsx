@@ -9,7 +9,7 @@ export function GoogleLoginButton({ onPress }: { onPress?: () => void }) {
         <TouchableOpacity
             onPress={onPress}
             className="h-[3.375rem] w-[21.25rem] flex-row items-center justify-center gap-3 rounded-[1.25rem] border-2 border-[#f9f7f6] bg-white"
-            activeOpacity={0.8}
+            activeOpacity={0.6}
             style={{
                 shadowColor: "rgba(94, 124, 156, 0.2)",
                 shadowOpacity: 0.2,
