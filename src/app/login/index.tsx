@@ -1,13 +1,16 @@
-import { useRouter } from "expo-router";
 import { Image, useColorScheme, View } from "react-native";
 
+import { googleSignInService } from "@/domain/services/google-signin";
 import { GoogleLoginButton } from "@/presentation/components/parts/google-login-button";
 import { LoginTemplate } from "@/presentation/components/template/login";
 import { Text } from "@/presentation/components/ui/text";
 
 export default function Index() {
     const colorScheme = useColorScheme();
-    const router = useRouter();
+
+    const handleGoogleLogin = () => {
+        googleSignInService.signInWithGoogle();
+    };
 
     return (
         <LoginTemplate>
@@ -64,11 +67,7 @@ export default function Index() {
                 </View>
 
                 <View className="mb-8 items-center">
-                    <GoogleLoginButton
-                        onPress={() => {
-                            router.push("/login/chukyo-pass");
-                        }}
-                    />
+                    <GoogleLoginButton onPress={handleGoogleLogin} />
                 </View>
             </View>
         </LoginTemplate>

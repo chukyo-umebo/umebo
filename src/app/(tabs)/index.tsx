@@ -2,7 +2,7 @@ import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { firebaseProvider } from "@/data/provider/firebase";
-import { AuthService } from "@/domain/services/auth";
+import { authService } from "@/domain/services/auth";
 import { ClassCard } from "@/presentation/components/parts/class-card";
 import { QuickAccessIcon } from "@/presentation/components/parts/quick-access-icon";
 import { MainTemplate } from "@/presentation/components/template/main";
@@ -35,7 +35,7 @@ export default function Index() {
                 </Button>
                 <Button
                     onPress={async () => {
-                        AuthService.signOut();
+                        authService.signOut();
                     }}
                 >
                     <ButtonText>ログアウト</ButtonText>

@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-import { AuthService, LoginStep } from "@/domain/services/auth";
-
+import { authService, LoginStep } from "@/domain/services/auth";
 
 interface AuthStateContextType {
     loginStep: LoginStep;
@@ -40,7 +39,7 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const loginStep = await AuthService.getLoginStep();
+                const loginStep = await authService.getLoginStep();
                 setLoginStep(loginStep);
             } catch (error) {
                 console.error("Failed to check login status:", error);

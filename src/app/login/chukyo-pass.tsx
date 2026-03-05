@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -7,18 +7,39 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
 
+import { authService } from "@/domain/services/auth";
+import { googleSignInService } from "@/domain/services/google-signin";
 import { LoginTemplate } from "@/presentation/components/template/login";
 import { Input } from "@/presentation/components/ui/input";
 import { Text } from "@/presentation/components/ui/text";
+import { useLoginSession } from "@/presentation/contexts/LoginSessionContext";
 
 export default function ChukyoLogin() {
-    const { id } = useLocalSearchParams<{ id: string }>();
     const [password, setPassword] = useState("");
-    const router = useRouter();
+    const [studentId, setStudentId] = useState("");
+    const { setLoginSession } = useLoginSession();
 
-    const displayId = id || "t324076";
+    const handleLogin = async () => {
+        const loginSession = await authService.loginIdPass(studentId, password);
+        setLoginSession(loginSession);
+    };
+
+    const handleBack = () => {
+        authService.signOut();
+    };
+
+    useEffect(() => {
+        (async () => {
+            const loggedInStudentId = await googleSignInService.getLoggedInStudentId();
+            if (loggedInStudentId) {
+                setStudentId(loggedInStudentId);
+            } else {
+                alert("Google認証の情報が見つかりませんでした。最初からやり直してください。");
+                authService.signOut();
+            }
+        })();
+    }, []);
 
     return (
         <LoginTemplate>
@@ -34,7 +55,7 @@ export default function ChukyoLogin() {
 
                             {/* Subtitle */}
                             <Text className="font-['Noto_Sans_JP:Medium'] text-[0.875rem] font-medium text-[#626160]">
-                                CU_ID({displayId})のパスワードを入力してください。
+                                CU_ID({studentId})のパスワードを入力してください。
                             </Text>
                         </View>
 
@@ -54,9 +75,7 @@ export default function ChukyoLogin() {
                             <View className="w-full gap-2">
                                 <TouchableOpacity
                                     className="h-[52px] w-full flex-row items-center justify-center gap-3 rounded-[20px] bg-[#1b1a19]"
-                                    onPress={() => {
-                                        router.push(`/login/chukyo-otp`);
-                                    }}
+                                    onPress={handleLogin}
                                 >
                                     <Text className="font-['Noto_Sans_JP:Medium'] text-[1rem] font-medium text-white">
                                         ログインして続ける
@@ -65,7 +84,7 @@ export default function ChukyoLogin() {
 
                                 <TouchableOpacity
                                     className="h-[54px] w-full items-center justify-center rounded-[20px]"
-                                    onPress={() => router.back()}
+                                    onPress={handleBack}
                                 >
                                     <Text className="font-['Noto_Sans_JP:Bold'] text-[1rem] font-bold text-[#626160]">
                                         google認証に戻る

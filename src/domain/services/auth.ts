@@ -13,7 +13,7 @@ export enum LoginStep {
     LoggedIn,
 }
 
-class authService {
+class AuthService {
     private authRepository: typeof authRepository;
     private storageProvider: typeof storageProvider;
     private googleSignInService: typeof googleSignInService;
@@ -68,10 +68,19 @@ class authService {
         return await this.authRepository.getLoginSession();
     }
 
+    public async refreshLoginSession() {
+        return await this.authRepository.getLoginSession();
+    }
+
+    /**
+     * 中京大学のワンタイムパスコードでログインする
+     * @param session - パスワード認証後のセッション情報
+     * @param otp - ワンタイムパスコード
+     */
     public async loginOTP(session: PasswordLoginSession, otp: string) {
         await this.authRepository.shibRegisterPasskeyWithOTP(session, otp);
         updateAuthState(LoginStep.LoggedIn);
     }
 }
 
-export const AuthService = new authService();
+export const authService = new AuthService();

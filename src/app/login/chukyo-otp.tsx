@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -7,15 +7,38 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
-import { useRouter } from "expo-router";
 
+import { authService } from "@/domain/services/auth";
 import { LoginTemplate } from "@/presentation/components/template/login";
 import { Input } from "@/presentation/components/ui/input";
 import { Text } from "@/presentation/components/ui/text";
+import { useLoginSession } from "@/presentation/contexts/LoginSessionContext";
 
 export default function ChukyoLogin() {
-    const [password, setPassword] = useState("");
-    const router = useRouter();
+    const [otp, setOtp] = useState("");
+    const { loginSession, setLoginSession } = useLoginSession();
+
+    const handleLogin = async () => {
+        if (!loginSession) {
+            alert("セッション情報が見つかりません。最初からやり直してください。");
+            return;
+        }
+        await authService.loginOTP(loginSession, otp);
+    };
+
+    const handleBack = () => {
+        authService.signOut();
+    };
+
+    
+
+    useEffect(() => {
+        if (!loginSession) {
+            (async () => {
+                setLoginSession(await authService.refreshLoginSession());
+            })();
+        }
+    }, [loginSession, setLoginSession]);
 
     return (
         <LoginTemplate>
@@ -38,20 +61,13 @@ export default function ChukyoLogin() {
                         {/* Card Container */}
                         <View className="mb-8 w-full max-w-[385px] items-center gap-6 self-center rounded-[36px] bg-white p-4">
                             {/* Password Input */}
-                            <Input
-                                value={password}
-                                onChangeText={setPassword}
-                                placeholder="ワンタイムパスコード"
-                                alphanumeric
-                            />
+                            <Input value={otp} onChangeText={setOtp} placeholder="ワンタイムパスコード" alphanumeric />
 
                             {/* Actions */}
                             <View className="w-full gap-2">
                                 <TouchableOpacity
                                     className="h-[52px] w-full flex-row items-center justify-center gap-3 rounded-[20px] bg-[#1b1a19]"
-                                    onPress={() => {
-                                        router.push("/login/option");
-                                    }}
+                                    onPress={handleLogin}
                                 >
                                     <Text className="font-['Noto_Sans_JP:Medium'] text-[1rem] font-medium text-white">
                                         ログインして続ける
@@ -60,7 +76,7 @@ export default function ChukyoLogin() {
 
                                 <TouchableOpacity
                                     className="h-[54px] w-full items-center justify-center rounded-[20px]"
-                                    onPress={() => router.back()}
+                                    onPress={handleBack}
                                 >
                                     <Text className="font-['Noto_Sans_JP:Bold'] text-[1rem] font-bold text-[#626160]">
                                         google認証に戻る

@@ -10,12 +10,13 @@ import * as firebase from "@react-native-firebase/app";
 
 import { GluestackUIProvider } from "@/presentation/components/ui/gluestack-ui-provider";
 import { AuthStateProvider, useAuthState } from "@/presentation/contexts/AuthStateContext";
+import { LoginSessionProvider } from "@/presentation/contexts/LoginSessionContext";
 
 import "./global.css";
 
 import { appInfoRepository } from "@/data/repositories/app-info";
-import { googleSignInService } from "@/domain/services/google-signin";
 import { LoginStep } from "@/domain/services/auth";
+import { googleSignInService } from "@/domain/services/google-signin";
 
 // @@iconify-code-gen
 
@@ -96,8 +97,10 @@ export default function RootLayout() {
         <GestureHandlerRootView>
             <GluestackUIProvider mode={colorMode ?? "light"}>
                 <AuthStateProvider>
-                    <Toasts />
-                    <Routes />
+                    <LoginSessionProvider>
+                        <Toasts />
+                        <Routes />
+                    </LoginSessionProvider>
                 </AuthStateProvider>
             </GluestackUIProvider>
         </GestureHandlerRootView>
